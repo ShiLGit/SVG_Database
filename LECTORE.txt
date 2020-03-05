@@ -1,0 +1,13 @@
+-call JSONtoSVG() from c library to make svgs 
+	-validate
+	-write **
+	-delete (delete the struct because the file is already there... DUH) 
+
+LIBRARY IN SAME DIRECTORY AS APP.JS (ALSO IN MOD DESC)
+TO DO: READ THE MARK BREAKDOWN
+
+--ACTUAL LECTURE-- 
+JSON >> key value pairs (they're a lot like hash tables in JS)
+ASSUME IF CREATING CIRCLE CX BEFORE CY ........ IN JSON .. etc 
+>>doesn't want fancy JSON parser in C 
+
