@@ -37,6 +37,10 @@ td, th {
     border: 1px solid #dddddd;
     text-align: left;
     padding: 8px 15px;
+    font-weight: normal;
+}
+.title-th{
+    font-weight: bold;
 }
 .table-wrapper1{
     overflow-y: auto;
@@ -46,9 +50,10 @@ table{
     width: 100%;
 }
 #file-view-img{
+    padding: 5px;
     display: block;
     margin: auto;
-    width: 800px;
+    width: 400px;
     text-align: center;
 }
 /*UR CUSTOM CSSSSSSSSSSSS*/

@@ -1,5 +1,7 @@
 // Put all onload AJAX calls here, and event listeners
 $(document).ready(function() {
+    const fileLog = document.getElementById('file-log');
+
     // On page-load AJAX Example
     $.ajax({
         type: 'get',            //Request type
@@ -15,7 +17,7 @@ $(document).ready(function() {
                 so we do not need to parse it on the server.
                 JavaScript really does handle JSONs seamlessly
             */
-            $('#blah').html("On page load, received string '"+data.foo+"' from server");
+          //  $('#blah').html("On page load, received string '"+data.foo+"' from server");
             //We write the object to the console to show that the request was successful
             console.log(data); 
 
@@ -30,21 +32,47 @@ $(document).ready(function() {
         type: 'get',            //Request type
         dataType: 'json',       //Data type - we will use JSON for almost everything 
         url: '/all',   //The server endpoint we are connecting to
-        success: function (data) {
-            console.log(data); 
+        success: function (allSvgs) {
+            //populate table
+            console.log(allSvgs); 
+            let files = allSvgs.files;
+            for(let i = 0; i < files.length; i++){
+                //build table row 
+                let row = `<tr>
+                    <th>
+                        <img id = "flog${i}"/>
+                    </th>
+                    <th ><a id="fname${i}" download/></th>
+                    <th id = "fsize${i}"></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    </tr>`
+
+                fileLog.insertAdjacentHTML('beforeend', row);
+            }
+            let options = "";
+            for(let i = 0; i < files.length; i++){
+                document.getElementById(`flog${i}`).src = files[i].fileName;
+                document.getElementById(`fname${i}`).innerHTML = files[i].fileName;
+                document.getElementById(`fname${i}`).href = files[i].fileName;
+                document.getElementById(`fsize${i}`).innerHTML = files[i].fileSize;
+                
+                options += `<option value="${files[i].fileName}">${files[i].fileName}</option>`;
+            }
+            document.getElementById("svg-name").innerHTML = options;
+            
         },
         fail: function(error) {
             console.log(error); 
         }
     })
-    // Event listener form example , we can use this instead explicitly listening for events
-    // No redirects if possible
-    $('#someform').submit(function(e){
-        $('#blah').html("Form has data: "+$('#entryBox').val());
+
+    //fileviewer: choose img to display
+    $('#file-select-form').submit(function(e){
         e.preventDefault();
-        //Pass data to the Ajax call, so it gets passed to the server
-        $.ajax({
-            //Create an object for connecting to another waypoint
-        });
+        let svgName =document.getElementById("svg-name").value 
+        $("#file-view-img").src = svgName;
     });
 });

@@ -30,44 +30,17 @@
     <div class = "table-wrapper1">
         <table id = "file-log">
             <tr>
-                <th>Image</th>
-                <th>File Name</th>
-                <th>File Size</th>
-                <th>Number Rects</th>
-                <th>Number Circs</th>
-                <th>Number Paths</th>
-                <th>Number Groups</th>
-            </tr>
-            <tr>
-                <th>1</th>
-                <th>1</th>
-                <th>1</th>
-                <th>1</th>
-                <th>1</th>
-                <th>1</th>
-                <th>1</th>
-            </tr>
-            
-            <tr>
-                <th>1</th>
-                <th>1</th>
-                <th>1</th>
-                <th>1</th>
-                <th>1</th>
-                <th>1</th>
-                <th>1</th>
-            </tr>
-            <tr>
-                <th>1</th>
-                <th>1</th>
-                <th>1</th>
-                <th>1</th>
-                <th>1</th>
-                <th>1</th>
-                <th>1</th>
+                <th class = "title-th">Image</th>
+                <th class = "title-th">File Name</th>
+                <th class = "title-th">File Size</th>
+                <th class = "title-th">Number Rects</th>
+                <th class = "title-th">Number Circs</th>
+                <th class = "title-th">Number Paths</th>
+                <th class = "title-th">Number Groups</th>
             </tr>
         </table>
     </div>
+
     <form id = "file-upload-form">
         <h4>Upload new file</h4>
         <input type="file" id="myfile" name="myfile" required = 'true'/>
@@ -79,17 +52,13 @@
     <form id = "file-select-form">
         <label for="svg-name">Choose a file to view:</label>
         <select id="svg-name" name="svg" required = true>
-          <option value="volvo">Volvo</option>
-          <option value="saab">Saab</option>
-          <option value="fiat">Fiat</option>
-          <option value="audi">Audi</option>
         </select>
         <input type="submit">
     </form>
 
 
     <div class = "table-wrapper1">
-        <img id = "file-view-img" src = "rects.svg" alt = "image"/>
+        <img id = "file-view-img" src = "" alt = "image"/>
 
         <table id = "file-view">
             <tr>
@@ -98,7 +67,7 @@
             </tr>
             <tr>
                 <td>Placeholder Title</td>
-                <td colspan = '2'>aceholder Desc</td>
+                <td colspan = '2'>Placeholder Desc</td>
             </tr>
 
             <tr>
@@ -108,9 +77,6 @@
             </tr>
         </table>
     </div>
-    <hr>
-    <div id="blah">I am blah</div>
-    <hr>
     <!--
     <form ref='someform'
           id='someform'>

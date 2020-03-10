@@ -24,18 +24,19 @@ app.get('/all',function(req,res){
 
   fs.readdir(path.join(__dirname+'/uploads'), function (err, files) {
     var allSvgs = {files: []};
-
     //handling error
     if (err) {
         return console.log('Unable to scan directory: ' + err);
     } 
     //listing all files using forEach
     files.forEach(function (file) {
-        console.log("...?");
-        //console.log(file.toString());
-        allSvgs.files.push(file);
+      var stats = fs.statSync(path.join(__dirname + '/uploads/' + file));
+
+      const ele = {fileName: file, fileSize: stats["size"] + " bytes"};
+      allSvgs.files.push(ele);
+    
     });
-    console.log(allSvgs);
+    
     res.send(allSvgs);
   });
 
