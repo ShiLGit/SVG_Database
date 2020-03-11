@@ -48,6 +48,9 @@
         <input type = 'submit'/>
     </form>
     <br/>
+    <hr/>
+    <br/>
+    
     <h2>File View</h2>
     <form id = "file-select-form">
         <label for="svg-name">Choose a file to view:</label>
@@ -61,21 +64,25 @@
         <img id = "file-view-img" src = "" alt = "image"/>
 
         <table id = "file-view">
-            <tr>
-                <th>Title</th>
-                <th colspan = '2'>Description</th>
-            </tr>
-            <tr>
-                <td>Placeholder Title</td>
-                <td colspan = '2'>Placeholder Desc</td>
-            </tr>
 
-            <tr>
-                <th>Component</th>
-                <th>Summary</th>
-                <th>Other Attributes</th>
-            </tr>
         </table>
+        <div id = "attrview-wrapper">
+            <h4>View/Edit Attributes</h3>
+            <label for="svg-ele">Choose an element to view:</label>
+            <select id="svg-ele">
+                <option value = 'placeholder'></option>
+            </select>
+            <p id = "attr-text">"The quick brown fox jumps over the lazy dog"</p>
+            <form id = "attr-form" >
+                <h5>Create/Update Attribute</h5>
+                <label for="new-attr-key">Name:</label>
+                <input id = "new-attr-key" required disabled/>
+                <label for="new-attr-value">Value:</label>
+                <input id = "new-attr-value" required disabled/>
+                <br/>
+                <input id = "new-attr-subm" type = "submit" disabled/>
+            </form>
+        </div>
     </div>
     <!--
     <form ref='someform'

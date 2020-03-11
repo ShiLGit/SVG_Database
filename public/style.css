@@ -33,13 +33,16 @@ form{
     text-align: center;
     margin: auto;   
 }
-td, th {
+td{
     border: 1px solid #dddddd;
     text-align: left;
     padding: 8px 15px;
     font-weight: normal;
 }
-.title-th{
+th{
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px 15px;
     font-weight: bold;
 }
 .table-wrapper1{
@@ -56,6 +59,10 @@ table{
     width: 800px;
     text-align: center;
 }
+#attrview-wrapper{
+    background-color: #d7ecff;
+}
+
 /*UR CUSTOM CSSSSSSSSSSSS*/
 
 input[type=submit], button {

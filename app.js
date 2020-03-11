@@ -22,7 +22,7 @@ const portNum = process.argv[2];
 
 const svgParse = ffi.Library('./libsvgparse.so', {
   'fileNameToJSON':['string', ['string']],
-  
+  'fileNameToDetailedJSON':['string', ['string']]
 });
 
 //respond to req for all images 
@@ -38,7 +38,6 @@ app.get('/all',function(req,res){
     //listing all files using forEach
     files.forEach(function (file) {
       const str = svgParse.fileNameToJSON("uploads/" + file)
-
       //run this block if the SVG is valid 
       if(!(!str || str=="{}")){
         let stats = fs.statSync(path.join(__dirname + '/uploads/' + file));
@@ -46,7 +45,6 @@ app.get('/all',function(req,res){
         ele.fileName = file;
         ele.fileSize = stats.size + " bytes";
         allSvgs.files.push(ele);
-        console.log(ele);
       }else{
         console.log("Invalid SVG - will not be sent to index.js");
       }
@@ -99,6 +97,11 @@ app.post('/upload', function(req, res) {
 //Respond to GET requests for files in the uploads/ directory
 app.get('/uploads/:name', function(req , res)
 {
+  let json =svgParse.fileNameToDetailedJSON("uploads/" + req.params.name);
+  console.log(json);
+  res.send(JSON.parse(json));
+
+  /*wat does this do (old code)
   fs.stat('uploads/' + req.params.name, function(err, stat) {
     if(err == null) {
       //res.sendFile(path.join(__dirname+'/uploads/' + req.params.name));
@@ -108,7 +111,23 @@ app.get('/uploads/:name', function(req , res)
       console.log('Error in file downloading route: '+err);
       res.send('');
     }
-  });
+  });*/
+});
+app.get('/attributes/:name', function(req , res)
+{
+  console.log(req.params);
+
+  /*wat does this do (old code)
+  fs.stat('uploads/' + req.params.name, function(err, stat) {
+    if(err == null) {
+      //res.sendFile(path.join(__dirname+'/uploads/' + req.params.name));
+      
+    
+    } else {
+      console.log('Error in file downloading route: '+err);
+      res.send('');
+    }
+  });*/
 });
 
 

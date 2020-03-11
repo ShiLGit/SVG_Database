@@ -81,6 +81,34 @@ char* fileNameToJSON(char* fileName){
   free(svg);
   return json;
 }
+//Given filename (INCLUDING DIRECTORY FROM ROOT), return JSON format; return NULL if invalid file
+
+char* fileNameToDetailedJSON(char* fileName){
+  char buffer[2000];
+  char* toReturn, *rList, *cList, *pList, *grList, *aList;
+  SVGimage* svg = createValidSVGimage(fileName, "parser/svg.xsd");
+  if(!svg){
+    return NULL;
+  }
+  rList = rectListToJSON(svg->rectangles);
+  cList = circListToJSON(svg->circles);
+  pList = pathListToJSON(svg->paths);
+  grList = groupListToJSON(svg->groups);
+  aList = attrListToJSON(svg->otherAttributes);
+
+  sprintf(buffer, "{\"title\":\"%s\",\"desc\":\"%s\",\"rects\":%s,\"circs\":%s,\"paths\":%s,\"groups\":%s,\"attr\":%s}",
+                   svg->title, svg->description, rList, cList, pList, grList, aList);
+  toReturn = malloc(strlen(buffer) + 1);
+  strcpy(toReturn, buffer);
+  
+  free(svg);
+  free(rList);
+  free(cList);
+  free(pList);
+  free(grList);
+  free(aList);
+  return toReturn;
+}
 /*******************************MODULE 2.1****************************/
 SVGimage* createValidSVGimage(char* fileName, char* schemaFile){
   
@@ -129,7 +157,6 @@ SVGimage* createValidSVGimage(char* fileName, char* schemaFile){
   }
   //namespace stuff...?
   xmlNodePtr root = xmlDocGetRootElement(xmlFile);
-  printf("\n!!!%s!!!\n", (char*)(root->ns)->href);
   xmlSetNs(root, root->ns);
 
   xmlSchemaValidCtxtPtr vctxt;
@@ -448,6 +475,9 @@ void setAttributeRect(SVGimage*, int, Attribute*);
 void setAttributePath(SVGimage*, int, Attribute*);
 void setAttributeGroup(SVGimage*, int, Attribute*);
 
+char* getAttributeGroup(SVGimage*, int);
+char* getAttributeRect(SVGimage*, int);
+
 int sa_attrReplaced(List*, Attribute*);
 int sa_preliminaryCheckAttr(Attribute*);
 void sa_addNewAttr(List*, Attribute*);
@@ -465,6 +495,18 @@ void setAttribute(SVGimage* image, elementType elemType, int elemIndex, Attribut
   }else if(elemType == GROUP){
     setAttributeGroup(image, elemIndex, newAttribute);
   }
+}
+char* getAttribute(char* fileName, elementType elemType, int elemIndex){
+  SVGimage *svg = createValidSVGimage(fileName, "parser/svg.xsd");
+  char* toReturn;
+  if(svg == NULL){
+    return "{ERROR: Invalid SVG.}";
+  }
+  if(elemType == RECT){
+    toReturn = getAttributeRect(svg, elemIndex);
+  }
+
+  return toReturn;
 }
 
 ///add copmpooooooooooooooonent 
@@ -509,6 +551,46 @@ void addComponent(SVGimage* image, elementType type, void* newElement){
 }
 
 /**************************helper fx MODULE 2.2**************************/
+char* getAttributeGroup(SVGimage* img, int index){
+  char* toReturn;
+  ListIterator iter = createIterator(img->groups);
+  
+  void* elem; 
+  int curIndex = 0;
+  int caseExed = 0;
+  Group* dst = NULL;
+  
+  while ((elem = nextElement(&iter)) != NULL){
+    if(curIndex == index){
+      dst = (Group*)elem;
+      break;
+    }else{
+       curIndex++;
+    }
+  }
+  toReturn = attrListToJSON(dst->otherAttributes);
+  return toReturn;
+}
+char* getAttributeRect(SVGimage* img, int index){
+  char* toReturn;
+  ListIterator iter = createIterator(img->rectangles);
+  
+  void* elem; 
+  int curIndex = 0;
+  int caseExed = 0;
+  Rectangle* dst = NULL;
+  
+  while ((elem = nextElement(&iter)) != NULL){
+    if(curIndex == index){
+      dst = (Rectangle*)elem;
+      break;
+    }else{
+       curIndex++;
+    }
+  }
+  toReturn = attrListToJSON(dst->otherAttributes);
+  return toReturn;
+}
 void setAttributeGroup(SVGimage* img, int index, Attribute *newAttribute){
   if(sa_preliminaryCheckAttr(newAttribute) == 0){
     return;
