@@ -68,9 +68,19 @@ void addOtherAttr(xmlNode*, List*);
 char* helloWorld(){
   char* x = malloc(30);
   strcpy(x, "Hello world");
-  return x;
+  return NULL;
 }
 
+//Given filename (INCLUDING DIRECTORY FROM ROOT), return JSON format; return NULL if invalid file
+char* fileNameToJSON(char* fileName){
+  SVGimage* svg = createValidSVGimage(fileName, "parser/svg.xsd");
+  if(!svg){
+    return NULL;
+  }
+  char* json = SVGtoJSON(svg);
+  free(svg);
+  return json;
+}
 /*******************************MODULE 2.1****************************/
 SVGimage* createValidSVGimage(char* fileName, char* schemaFile){
   

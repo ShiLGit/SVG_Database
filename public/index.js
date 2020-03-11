@@ -34,31 +34,25 @@ $(document).ready(function() {
         url: '/all',   //The server endpoint we are connecting to
         success: function (allSvgs) {
             //populate table
-            console.log(allSvgs); 
             let files = allSvgs.files;
             for(let i = 0; i < files.length; i++){
                 //build table row 
                 let row = `<tr>
                     <th>
-                        <img id = "flog${i}"/>
+                        <img src = "${files[i].fileName}"/>
                     </th>
-                    <th ><a id="fname${i}" download/></th>
-                    <th id = "fsize${i}"></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
+                    <th ><a href = "${files[i].fileName}" download/>${files[i].fileName}</th>
+                    <th>${files[i].fileSize}</th>
+                    <th>${files[i].numRect}</th>
+                    <th>${files[i].numCirc}</th>
+                    <th>${files[i].numPaths}</th>
+                    <th>${files[i].numGroups}</th>
                     </tr>`
 
                 fileLog.insertAdjacentHTML('beforeend', row);
             }
             let options = "";
-            for(let i = 0; i < files.length; i++){
-                document.getElementById(`flog${i}`).src = files[i].fileName;
-                document.getElementById(`fname${i}`).innerHTML = files[i].fileName;
-                document.getElementById(`fname${i}`).href = files[i].fileName;
-                document.getElementById(`fsize${i}`).innerHTML = files[i].fileSize;
-                
+            for(let i = 0; i < files.length; i++){           
                 options += `<option value="${files[i].fileName}">${files[i].fileName}</option>`;
             }
             document.getElementById("svg-name").innerHTML = options;
@@ -73,6 +67,15 @@ $(document).ready(function() {
     $('#file-select-form').submit(function(e){
         e.preventDefault();
         let svgName =document.getElementById("svg-name").value 
-        $("#file-view-img").src = svgName;
+        $("#file-view-img").attr("src",svgName);
+
+        $.ajax({
+                type: 'get',            //Request type
+                dataType: 'json',       //Data type - we will use JSON for almost everything 
+                url: '/uploads/' + svgName,   //The server endpoint we are connecting to
+                success: function(data){
+                    console.log("...",data);
+                }
+        })
     });
 });

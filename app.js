@@ -19,21 +19,37 @@ const JavaScriptObfuscator = require('javascript-obfuscator');
 // Important, pass in port as in `npm run dev 1234`, do not change
 const portNum = process.argv[2];
 
+
+const svgParse = ffi.Library('./libsvgparse.so', {
+  'fileNameToJSON':['string', ['string']],
+  
+});
+
 //respond to req for all images 
 app.get('/all',function(req,res){
 
   fs.readdir(path.join(__dirname+'/uploads'), function (err, files) {
-    var allSvgs = {files: []};
+    let allSvgs = {files: []};
+
     //handling error
     if (err) {
         return console.log('Unable to scan directory: ' + err);
     } 
     //listing all files using forEach
     files.forEach(function (file) {
-      var stats = fs.statSync(path.join(__dirname + '/uploads/' + file));
+      const str = svgParse.fileNameToJSON("uploads/" + file)
 
-      const ele = {fileName: file, fileSize: stats["size"] + " bytes"};
-      allSvgs.files.push(ele);
+      //run this block if the SVG is valid 
+      if(!(!str || str=="{}")){
+        let stats = fs.statSync(path.join(__dirname + '/uploads/' + file));
+        const ele = JSON.parse(str);
+        ele.fileName = file;
+        ele.fileSize = stats.size + " bytes";
+        allSvgs.files.push(ele);
+        console.log(ele);
+      }else{
+        console.log("Invalid SVG - will not be sent to index.js");
+      }
     
     });
     
@@ -81,10 +97,13 @@ app.post('/upload', function(req, res) {
 });
 
 //Respond to GET requests for files in the uploads/ directory
-app.get('/uploads/:name', function(req , res){
+app.get('/uploads/:name', function(req , res)
+{
   fs.stat('uploads/' + req.params.name, function(err, stat) {
     if(err == null) {
-      res.sendFile(path.join(__dirname+'/uploads/' + req.params.name));
+      //res.sendFile(path.join(__dirname+'/uploads/' + req.params.name));
+      
+    
     } else {
       console.log('Error in file downloading route: '+err);
       res.send('');

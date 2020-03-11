@@ -9,6 +9,11 @@
 #include <libxml/xmlschemastypes.h>
 #include "LinkedListAPI.h"
 
+//interface to javascript ----------------------------
+char* fileNameToJSON(char*);
+
+
+//----------------------------------------------------
 typedef enum COMP{
     SVG_IMAGE, CIRC, RECT, PATH, GROUP
 } elementType;
