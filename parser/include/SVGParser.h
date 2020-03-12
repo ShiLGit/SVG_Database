@@ -17,6 +17,7 @@ typedef enum COMP{
 char* fileNameToJSON(char*);
 char* fileNameToDetailedJSON(char*);
 char* getAttribute(char* fileName, elementType elemType, int elemIndex);
+int setAttrFile(char* fname, char* json, elementType elemType, int elemIndex);
 //----------------------------------------------------
 //Represents a generic SVG element/XML node Attribute
 typedef struct  {

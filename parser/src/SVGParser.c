@@ -1155,7 +1155,7 @@ char** valuesJSON(const char *svgString){
       toReturn[numVals-1] = malloc(strlen(buffer) + 1);
       strcpy(toReturn[numVals-1], buffer);
       copy = 0;
-      printf("\nstring = [%s]", buffer);
+      //printf("\nstring = [%s]", buffer);
     }else if (copy){
       buffer[cpyIdx] = svgString[i];
       cpyIdx++;
@@ -1225,7 +1225,7 @@ Circle* JSONtoCircle(const char* svgString){
   for(int i = 0; i < 4; i++)
     free(vals[i]);
   free(vals);
-  printf("\n%s", circleToString(toReturn));
+  //printf("\n%s", circleToString(toReturn));
   return toReturn;
 }
 char* SVGtoJSON(const SVGimage* imge){
