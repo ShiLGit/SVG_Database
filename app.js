@@ -25,7 +25,8 @@ const svgParse = ffi.Library('./libsvgparse.so', {
   'fileNameToJSON':['string', ['string']],
   'fileNameToDetailedJSON':['string', ['string']],
   'getAttribute':['string', ['string', 'int', 'int']],
-  'setAttrFile': ['int', ['string', 'string', 'int', 'int']]
+  'setAttrFile': ['int', ['string', 'string', 'int', 'int']],
+  'setTDFile':['int', ['string', 'string']]
 });
 
 //respond to req for all images 
@@ -86,7 +87,14 @@ app.post('/upload', function(req, res) {
   }
  
   let uploadFile = req.files.uploadFile;
- 
+  console.log(uploadFile);
+  if(uploadFile.mimetype !== 'image/svg+xml'){
+   // res.send(JSON.stringify({error: "File is not a valid SVG."}));
+    return;
+  }else{
+  //  res.send(JSON.stringify({success: "CONGRATULATIONS!!!!! YOU SENT AN SVG!!!!!"}));
+  }
+
   // Use the mv() method to place the file somewhere on your server
   uploadFile.mv('uploads/' + uploadFile.name, function(err) {
     if(err) {
@@ -128,6 +136,17 @@ app.post('/updateattribute', function(req, res){
     res.send(JSON.stringify({success: "SVG changed successfully."}));
   }
 });
+
+app.post('/updatetd', function(req, res){
+  const reqData = req.body;
+  console.log(JSON.stringify(reqData));
+  let flag =svgParse.setTDFile(reqData.filename, JSON.stringify(reqData));
+  if(flag){
+    res.send(JSON.stringify({success: "SVG changed successfully."}));
+  }else{
+    res.send(JSON.stringify({error: 'Could not validate SVG.'}));
+  }
+})
 function enumerate(str){
   if(str == 'circ'){
     return 1;

@@ -18,6 +18,8 @@ char* fileNameToJSON(char*);
 char* fileNameToDetailedJSON(char*);
 char* getAttribute(char* fileName, elementType elemType, int elemIndex);
 int setAttrFile(char* fname, char* json, elementType elemType, int elemIndex);
+int setTDFile(char* fname, const char* json);
+
 //----------------------------------------------------
 //Represents a generic SVG element/XML node Attribute
 typedef struct  {

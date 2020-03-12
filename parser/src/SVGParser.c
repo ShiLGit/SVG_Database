@@ -56,7 +56,7 @@ void safeFree(void*);
 void smartConcat(char**, char*);
 void parseUnit(char*, char*);
 void initLists(SVGimage*);
-
+char** valuesJSON(const char *svgString);
 bool hasFileExt(char*);
 xmlDoc* parseTree(SVGimage*);
 void addChildRects(xmlNode*, List*);
@@ -1115,6 +1115,27 @@ Attribute* JSONtoAttribute(const char*);
 Circle* JSONtoCircle(const char*);
 Rectangle* JSONtoRect(const char*);
 
+//overwrite title/desc of file; return = 1 for success, 0 for fail
+int setTDFile(char* fname, const char* json){
+  SVGimage* svg = createValidSVGimage(fname, "parser/svg.xsd");
+  if(!svg){
+    return 0;
+  }
+  char** vals = valuesJSON(json);
+
+  strncpy(svg->title, vals[0], 255);
+  strncpy(svg->description, vals[1], 255);
+  if(!validateSVGimage(svg, "parser/svg.xsd")){
+    return 0;
+  }
+  writeSVGimage(svg, vals[2]);
+  //printf("\nt(%s) d(%s)", svg->title, svg->description);
+  free(vals[0]);
+  free(vals[1]);
+  free(vals[2]);
+  free(vals);
+  return 1;
+}
 //set attribute in file; overwrite exising IF VALID. return 1 for success, 0 for failure
 int setAttrFile(char* fname, char* json, elementType elemType, int elemIndex){
   SVGimage* svg = createValidSVGimage(fname, "parser/svg.xsd");
@@ -1128,6 +1149,7 @@ int setAttrFile(char* fname, char* json, elementType elemType, int elemIndex){
   }
 
   writeSVGimage(svg, fname);
+  free(svg);
   return 1;
 }
 //takes svg json, returns array of its values ORDERED IN STRING; NO ERRORCHECKING

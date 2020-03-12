@@ -41,12 +41,20 @@
         </table>
     </div>
 
-    <form id = "file-upload-form">
+    <form id="uploadForm"
+         enctype="multipart/form-data"
+         action="/upload"
+         method="post">
+      <input type="file" name="uploadFile" />
+      <input type="submit" value="Upload Image" name="submit">
+      <span id = "status"></span>
+    </form>
+    <!--<form id = "file-upload-form" action ='/upload'>
         <h4>Upload new file</h4>
         <input type="file" id="myfile" name="myfile" required = 'true'/>
         <input type = 'text' required = 'true'/>
         <input type = 'submit'/>
-    </form>
+    </form>-->
     <br/>
     <hr/>
     <br/>
@@ -82,7 +90,7 @@
                 <input id = "new-attr-value" required disabled/>
                 <input id = "new-attr-subm" type = "submit" disabled></input>
             </form>
-            <form id = "title-form">
+            <form id = "td-form">
                 <h5>Edit Title/Description</h5>
                 <label for="new-title">Title:</label>
                 <input id = "new-title" disabled/>

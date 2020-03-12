@@ -171,17 +171,14 @@ $(document).ready(function() {
 
     $('#td-form').submit((e)=>{
         e.preventDefault();
-        
-        let arg = {title: $("#new-title").val(), desc: $('#new-desc').val(), filename: curFile};
+        let arg = {title: $("#new-title").val(), desc: $('#new-desc').val(), filename: 'uploads/'+curFile};
         console.log(arg);
-        let props2 = JSON.parse(props);
-        props2.attr = attr;
-        console.log('props2:', props2);
+
         $.ajax({
             type: 'POST',
-            url:'/updateattribute',
+            url:'/updatetd',
             contentType: 'application/json',
-            data: JSON.stringify(props2),
+            data: JSON.stringify(arg),
 
             success: function(data){
                 const res = JSON.parse(data);
@@ -230,7 +227,18 @@ $(document).ready(function() {
             }
         })
     }
-
+    $('#file-upload-form').submit(function(e){
+        e.preventDefault();
+        console.log('file:',$('#myfile').val());
+        $.ajax({
+            type: 'POST',
+            data: $('#myfile').val(),
+            contentType: 'XML',
+            success: function(data){
+                alert('fupload workded?!');
+            }
+        })
+    })
     //HELPERS --------------------------------------------------------------------------------------
     function makeFViewEntry(ele){
         let entry = 
