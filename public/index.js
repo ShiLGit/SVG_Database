@@ -241,9 +241,9 @@ $(document).ready(function() {
             url: '/create',
             data: JSON.stringify(data),
             success: function(data){
-                alert("?")
                 if(data.error){
                     alert("Error: " + data.error);
+                    e.preventDefault();
                 }else{
                     alert(data.success);
                 }
