@@ -116,12 +116,17 @@ app.get('/uploads/:name', function(req , res)
   });*/
 });
 app.post('/updateattribute', function(req, res){
-  console.log('shitttttt!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
   const reqData = req.body;
   console.log(JSON.stringify(reqData.attr));
   let flag = svgParse.setAttrFile('uploads/'+reqData.filename, JSON.stringify(reqData.attr), enumerate(reqData.type), reqData.num-1);
-  console.log(req.body);
-  res.send(null);
+  console.log(flag, req.body);
+  if(flag == -1){
+    res.send(JSON.stringify({error: "Invalid attribute. Change was not saved."}));
+  }else if( flag == 0){
+    res.send(JSON.stringify({error: reqData.filename + " could not validate against svg.xsd."}));
+  }else{
+    res.send(JSON.stringify({success: "SVG changed successfully."}));
+  }
 });
 function enumerate(str){
   if(str == 'circ'){

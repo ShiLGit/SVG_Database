@@ -3,42 +3,47 @@ $(document).ready(function() {
     const fileLog = document.getElementById('file-log');
     let curFile = ""; //file open in file viewer
     let props = {}; //properties of selected omponent
+
+    updateLog();
+
     //get all files for file laaaaaaaaaaaaaaaaaawg; render on screen
-    $.ajax({
-        type: 'get',            //Request type
-        dataType: 'json',       //Data type - we will use JSON for almost everything 
-        url: '/all',   //The server endpoint we are connecting to
-        success: function (allSvgs) {
-            //populate table
-            let files = allSvgs.files;
-            for(let i = 0; i < files.length; i++){
-                //build table row 
-                let row = `<tr>
-                    <td>
-                        <img src = "${files[i].fileName}"/>
-                    </td>
-                    <td ><a href = "${files[i].fileName}" download/>${files[i].fileName}</td>
-                    <td>${files[i].fileSize}</td>
-                    <td>${files[i].numRect}</td>
-                    <td>${files[i].numCirc}</td>
-                    <td>${files[i].numPaths}</td>
-                    <td>${files[i].numGroups}</td>
-                    </tr>`
-
-                fileLog.insertAdjacentHTML('beforeend', row);
+    function updateLog(){
+        console.log("updateLog() called");
+        $.ajax({
+            type: 'get',            //Request type
+            dataType: 'json',       //Data type - we will use JSON for almost everything 
+            url: '/all',   //The server endpoint we are connecting to
+            success: function (allSvgs) {
+                //populate table
+                let files = allSvgs.files;
+                for(let i = 0; i < files.length; i++){
+                    //build table row 
+                    let row = `<tr>
+                        <td>
+                            <img src = "${files[i].fileName}"/>
+                        </td>
+                        <td ><a href = "${files[i].fileName}" download/>${files[i].fileName}</td>
+                        <td>${files[i].fileSize}</td>
+                        <td>${files[i].numRect}</td>
+                        <td>${files[i].numCirc}</td>
+                        <td>${files[i].numPaths}</td>
+                        <td>${files[i].numGroups}</td>
+                        </tr>`
+    
+                    fileLog.insertAdjacentHTML('beforeend', row);
+                }
+                let options = "";
+                for(let i = 0; i < files.length; i++){           
+                    options += `<option value="${files[i].fileName}">${files[i].fileName}</option>`;
+                }
+                document.getElementById("svg-name").innerHTML = options;
+                 
+            },
+            fail: function(error) {
+                console.log(error); 
             }
-            let options = "";
-            for(let i = 0; i < files.length; i++){           
-                options += `<option value="${files[i].fileName}">${files[i].fileName}</option>`;
-            }
-            document.getElementById("svg-name").innerHTML = options;
-            
-        },
-        fail: function(error) {
-            console.log(error); 
-        }
-    })
-
+        })
+    }
 //FILEVIEWER STUFFFFFFFF----------------------------------------------------------------------------------------
     $('#file-select-form').submit(function(e){
         e.preventDefault();
@@ -52,6 +57,7 @@ $(document).ready(function() {
                 url: '/uploads/' + svgName,   //The server endpoint we are connecting to
                 success: function(data){
                     renderReport(data);
+                    toggleTDForm(true);
                 },
                 fail: function(err){
                     console.log(err);
@@ -129,28 +135,12 @@ $(document).ready(function() {
         $("#fview-title").html(data.title);
         $("#fview-desc").html(data.desc);
         $('#svg-ele').html(options);
+        document.getElementById('new-title').value = data.title;
+        document.getElementById('new-desc').value =data.desc;
     }
 
     //EDITING/ADDING ATTRIBUTES FROM FILELOG--------------------------------------------------------
     $('#attr-form').submit((e)=>{
-        /**
-         * 
-         * let svgName =document.getElementById("svg-name").value 
-        curFile = svgName;
-        $("#file-view-img").attr("src",svgName);
-
-        $.ajax({
-                type: 'get',            //Request type
-                dataType: 'json',       //Data type - we will use JSON for almost everything 
-                url: '/uploads/' + svgName,   //The server endpoint we are connecting to
-                success: function(data){
-                    renderReport(data);
-                },
-                fail: function(err){
-                    console.log(err);
-                }
-        })
-         */
         e.preventDefault();
         let attr = {name: $('#new-attr-key').val(), value: $('#new-attr-value').val()};
         let props2 = JSON.parse(props);
@@ -161,12 +151,53 @@ $(document).ready(function() {
             url:'/updateattribute',
             contentType: 'application/json',
             data: JSON.stringify(props2),
+
             success: function(data){
-                alert("SVG update successfully.");
+                const res = JSON.parse(data);
+                console.log('data..',data);
+                if(res.error){
+                    alert("Error: " +res.error);
+                }else{
+                    alert(res.success);
+                    location.reload();
+                }
                 //update whole page(file log)
+            },
+            fail: function(data){
+                alert("Error: updates not saved.");
             }
         });
+    });
 
+    $('#td-form').submit((e)=>{
+        e.preventDefault();
+        
+        let arg = {title: $("#new-title").val(), desc: $('#new-desc').val(), filename: curFile};
+        console.log(arg);
+        let props2 = JSON.parse(props);
+        props2.attr = attr;
+        console.log('props2:', props2);
+        $.ajax({
+            type: 'POST',
+            url:'/updateattribute',
+            contentType: 'application/json',
+            data: JSON.stringify(props2),
+
+            success: function(data){
+                const res = JSON.parse(data);
+                console.log('data..',data);
+                if(res.error){
+                    alert("Error: " +res.error);
+                }else{
+                    alert(res.success);
+                    location.reload();
+                }
+                //update whole page(file log)
+            },
+            fail: function(data){
+                alert("Error: updates not saved.");
+            }
+        });
     });
     document.getElementById("svg-ele").onchange = (e)=>{
         const data = document.getElementById("svg-ele").value;
@@ -216,5 +247,10 @@ $(document).ready(function() {
         $('#new-attr-key').attr('disabled', !enabled);
         $('#new-attr-value').attr('disabled', !enabled);
         $('#new-attr-subm').attr('disabled', !enabled);
+    }
+    function toggleTDForm(enabled){
+        $('#new-title').attr('disabled', !enabled);
+        $('#new-desc').attr('disabled', !enabled);
+        $('#new-td-subm').attr('disabled', !enabled);
     }
 });
