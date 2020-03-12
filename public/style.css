@@ -64,7 +64,10 @@ table{
 }
 
 /*UR CUSTOM CSSSSSSSSSSSS*/
-
+#new-form-wrapper{
+    background-color: aliceblue;
+    margin: auto;
+}
 input[type=submit], button {
     cursor: pointer;
     cursor: hand;

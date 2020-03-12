@@ -15,8 +15,6 @@ void vNull(){
 }
 int main(int argc, char **argv)
 {
-  printf("\n{\"name\":\"myname\",\"value\":\"myvalue\"}");
-  Attribute* x = JSONtoAttribute("{\"name\":\"myname\",\"value\":\"myvalue\"0}");
-  printf("\n%s %s", x->name, x->value);
+  makeEmpty("test.svg");
   return 0;
 }

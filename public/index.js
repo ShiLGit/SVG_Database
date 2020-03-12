@@ -227,18 +227,45 @@ $(document).ready(function() {
             }
         })
     }
-    $('#file-upload-form').submit(function(e){
-        e.preventDefault();
-        console.log('file:',$('#myfile').val());
+    $('#create-form').submit(function(e){
+        let data = {name: $('#new-fname').val()};
+        //input check 
+        if(data.name.indexOf(".svg") == -1){
+            data.name = data.name.concat(".svg");
+        }
+        console.log(data);
+
         $.ajax({
             type: 'POST',
-            data: $('#myfile').val(),
-            contentType: 'XML',
+            contentType: 'application/json',
+            url: '/create',
+            data: JSON.stringify(data),
             success: function(data){
-                alert('fupload workded?!');
+                alert("?")
+                if(data.error){
+                    alert("Error: " + data.error);
+                }else{
+                    alert(data.success);
+                }
+
             }
-        })
+        });
     })
+    $('#uploadForm').submit(function() {
+        alert(".");
+        $(this).ajaxSubmit({
+            error: function(xhr) {
+                alert(xhr.status);
+                status('Error: ' + xhr.status);
+            },
+            success: function(response) {
+                alert(response);
+                console.log(response);
+            }
+        });
+        //Very important line, it disable the page refresh.
+        return false;
+    }); 
     //HELPERS --------------------------------------------------------------------------------------
     function makeFViewEntry(ele){
         let entry = 
