@@ -9,6 +9,7 @@ const app     = express();
 const path    = require("path");
 const fileUpload = require('express-fileupload');
 
+app.use(express.json());
 app.use(fileUpload());
 app.use(express.static(path.join(__dirname+'/uploads')));
 
@@ -22,7 +23,8 @@ const portNum = process.argv[2];
 
 const svgParse = ffi.Library('./libsvgparse.so', {
   'fileNameToJSON':['string', ['string']],
-  'fileNameToDetailedJSON':['string', ['string']]
+  'fileNameToDetailedJSON':['string', ['string']],
+  'getAttribute':['string', ['string', 'int', 'int']]
 });
 
 //respond to req for all images 
@@ -98,7 +100,6 @@ app.post('/upload', function(req, res) {
 app.get('/uploads/:name', function(req , res)
 {
   let json =svgParse.fileNameToDetailedJSON("uploads/" + req.params.name);
-  console.log(json);
   res.send(JSON.parse(json));
 
   /*wat does this do (old code)
@@ -113,10 +114,26 @@ app.get('/uploads/:name', function(req , res)
     }
   });*/
 });
-app.get('/attributes/:name', function(req , res)
+app.post('/attributes', function(req, res)
 {
-  console.log(req.params);
+  const reqData = req.body;
+  let str = "[]";
+  console.log('DATA:', req.body);
 
+  console.log(str);
+  if(reqData.type == 'rect'){
+    str = svgParse.getAttribute("uploads/" + reqData.filename, 2, reqData.num-1);
+  }else if(reqData.type == 'circ'){
+    str = svgParse.getAttribute("uploads/" + reqData.filename, 1, reqData.num-1);
+  }else if(reqData.type == 'path'){
+    str = svgParse.getAttribute("uploads/" + reqData.filename, 3, reqData.num-1);
+  }else if(reqData.type == 'group'){
+    str = svgParse.getAttribute("uploads/" + reqData.filename, 4, reqData.num-1);
+  }
+  console.log(str);
+  const json = `{"attr": ${str}}`
+  console.log(json);
+  res.send(json);
   /*wat does this do (old code)
   fs.stat('uploads/' + req.params.name, function(err, stat) {
     if(err == null) {

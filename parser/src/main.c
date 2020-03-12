@@ -15,7 +15,8 @@ void vNull(){
 }
 int main(int argc, char **argv)
 {
-  Circle* x = JSONtoCircle("{\"cx\":1,\"cy\":2,\"r\":444,\"units\":\"unitStr\"}");
-
+  printf("\n{\"name\":\"myname\",\"value\":\"myvalue\"}");
+  Attribute* x = JSONtoAttribute("{\"name\":\"myname\",\"value\":\"myvalue\"0}");
+  printf("\n%s %s", x->name, x->value);
   return 0;
 }

@@ -395,7 +395,7 @@ Rectangle* JSONtoRect(const char* svgString);
 *@param str - a pointer to a string
 **/
 Circle* JSONtoCircle(const char* svgString);
-
+Attribute* JSONtoAttribute(const char*);
 
 /* ******************************* List helper functions  - MUST be implemented *************************** */
 

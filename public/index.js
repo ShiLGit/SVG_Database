@@ -1,6 +1,8 @@
 // Put all onload AJAX calls here, and event listeners
 $(document).ready(function() {
     const fileLog = document.getElementById('file-log');
+    let curFile = ""; //file open in file viewer
+    let props = {}; //properties of selected omponent
     //get all files for file laaaaaaaaaaaaaaaaaawg; render on screen
     $.ajax({
         type: 'get',            //Request type
@@ -41,6 +43,7 @@ $(document).ready(function() {
     $('#file-select-form').submit(function(e){
         e.preventDefault();
         let svgName =document.getElementById("svg-name").value 
+        curFile = svgName;
         $("#file-view-img").attr("src",svgName);
 
         $.ajax({
@@ -49,7 +52,6 @@ $(document).ready(function() {
                 url: '/uploads/' + svgName,   //The server endpoint we are connecting to
                 success: function(data){
                     renderReport(data);
-
                 },
                 fail: function(err){
                     console.log(err);
@@ -130,26 +132,64 @@ $(document).ready(function() {
     }
 
     //EDITING/ADDING ATTRIBUTES FROM FILELOG--------------------------------------------------------
+    $('#attr-form').submit((e)=>{
+        /**
+         * 
+         * let svgName =document.getElementById("svg-name").value 
+        curFile = svgName;
+        $("#file-view-img").attr("src",svgName);
+
+        $.ajax({
+                type: 'get',            //Request type
+                dataType: 'json',       //Data type - we will use JSON for almost everything 
+                url: '/uploads/' + svgName,   //The server endpoint we are connecting to
+                success: function(data){
+                    renderReport(data);
+                },
+                fail: function(err){
+                    console.log(err);
+                }
+        })
+         */
+        e.preventDefault();
+        let attr = {name: $('#new-attr-key').val(), value: $('#new-attr-value').val()};
+        let props2 = [...props];
+        console.log(props);
+        console.log(attr);
+        $.ajax({
+            type: 'POST',
+            dataType: 'json/application',
+            url:'/update-attribute',
+            contentType: 'json/application',
+            data: null
+        });
+
+    });
     document.getElementById("svg-ele").onchange = (e)=>{
         const data = document.getElementById("svg-ele").value;
-        console.log(document.getElementById("svg-ele").value);
-
-
         if(document.getElementById("svg-ele").value === "placeholder"){
-            $('#attr-text').html("");
+            $('#attr-summary').html("");
+            toggleAttrForm(false);
             return;
         }
+        toggleAttrForm(true);
         const keypairs = data.split(";");
-        const props = {type: keypairs[0].split("=")[1], num: keypairs[1].split("=")[1]};
+        props = `{"type": "${keypairs[0].split("=")[1]}", "num": "${keypairs[1].split("=")[1]}", "filename": "${curFile}"}`;
         
-
+        console.log(props);
         //get attribute for selected element
         $.ajax({
-            type: 'get',
-            dataType: 'json',
-            url: '/attributes/rects.svg',
-            success: (data)=>{
-
+            type: 'POST',
+            data: props,
+            url: '/attributes',
+            contentType: 'application/json',
+            success: function(data){
+                let str = "";
+                const attr = JSON.parse(data).attr;
+                attr.forEach(a=>{
+                    str+=`<p style = 'font-weight:normal'>${a.name}: ${a.value}</p>`;
+                })
+                $('#attr-summary').html(str);
             },
             fail: (data)=>{
 
@@ -170,7 +210,6 @@ $(document).ready(function() {
         return entry;
     }
     function toggleAttrForm(enabled){
-        console.log('...?');
         $('#new-attr-key').attr('disabled', !enabled);
         $('#new-attr-value').attr('disabled', !enabled);
         $('#new-attr-subm').attr('disabled', !enabled);

@@ -477,6 +477,8 @@ void setAttributeGroup(SVGimage*, int, Attribute*);
 
 char* getAttributeGroup(SVGimage*, int);
 char* getAttributeRect(SVGimage*, int);
+char* getAttributePath(SVGimage*, int);
+char* getAttributeCirc(SVGimage*, int);
 
 int sa_attrReplaced(List*, Attribute*);
 int sa_preliminaryCheckAttr(Attribute*);
@@ -504,8 +506,15 @@ char* getAttribute(char* fileName, elementType elemType, int elemIndex){
   }
   if(elemType == RECT){
     toReturn = getAttributeRect(svg, elemIndex);
+  }else if(elemType == CIRC){
+    toReturn = getAttributeCirc(svg, elemIndex);
+  }else if (elemType == PATH){
+    toReturn = getAttributePath(svg, elemIndex);
+  }else if(elemType == GROUP){
+    toReturn = getAttributeGroup(svg, elemIndex);
+  }else{
+    return NULL;
   }
-
   return toReturn;
 }
 
@@ -557,7 +566,6 @@ char* getAttributeGroup(SVGimage* img, int index){
   
   void* elem; 
   int curIndex = 0;
-  int caseExed = 0;
   Group* dst = NULL;
   
   while ((elem = nextElement(&iter)) != NULL){
@@ -577,7 +585,6 @@ char* getAttributeRect(SVGimage* img, int index){
   
   void* elem; 
   int curIndex = 0;
-  int caseExed = 0;
   Rectangle* dst = NULL;
   
   while ((elem = nextElement(&iter)) != NULL){
@@ -591,6 +598,45 @@ char* getAttributeRect(SVGimage* img, int index){
   toReturn = attrListToJSON(dst->otherAttributes);
   return toReturn;
 }
+char* getAttributeCirc(SVGimage* img, int index){
+  char* toReturn;
+  ListIterator iter = createIterator(img->circles);
+  
+  void* elem; 
+  int curIndex = 0;
+  Circle* dst = NULL;
+  
+  while ((elem = nextElement(&iter)) != NULL){
+    if(curIndex == index){
+      dst = (Circle*)elem;
+      break;
+    }else{
+       curIndex++;
+    }
+  }
+  toReturn = attrListToJSON(dst->otherAttributes);
+  return toReturn;
+}
+char* getAttributePath(SVGimage* img, int index){
+  char* toReturn;
+  ListIterator iter = createIterator(img->paths);
+  
+  void* elem; 
+  int curIndex = 0;
+  Path* dst = NULL;
+  
+  while ((elem = nextElement(&iter)) != NULL){
+    if(curIndex == index){
+      dst = (Path*)elem;
+      break;
+    }else{
+       curIndex++;
+    }
+  }
+  toReturn = attrListToJSON(dst->otherAttributes);
+  return toReturn;
+}
+//---------------------end of getattribtues
 void setAttributeGroup(SVGimage* img, int index, Attribute *newAttribute){
   if(sa_preliminaryCheckAttr(newAttribute) == 0){
     return;
@@ -1065,6 +1111,25 @@ char* pathToJSON(const Path *);
 char* rectToJSON(const Rectangle *);
 char* circleToJSON(const Circle *);
 
+Attribute* JSONtoAttribute(const char*);
+Circle* JSONtoCircle(const char*);
+Rectangle* JSONtoRect(const char*);
+
+//set attribute in file; overwrite exising IF VALID. return 1 for success, 0 for failure
+int setAttrFile(char* fname, char* json, elementType elemType, int elemIndex){
+  SVGimage* svg = createValidSVGimage(fname, "parser/svg.xsd");
+  if(!svg){
+    return 0;
+  }
+  Attribute *new_attr = JSONtoAttribute(json);
+  setAttribute(svg, elemType, elemIndex, new_attr);
+  if(validateSVGimage(svg, "svg.xsd")==false){
+    return -1;
+  }
+
+  writeSVGimage(svg, fname);
+  return 1;
+}
 //takes svg json, returns array of its values ORDERED IN STRING; NO ERRORCHECKING
 char** valuesJSON(const char *svgString){
   char** toReturn = malloc(sizeof(char*));
@@ -1080,10 +1145,10 @@ char** valuesJSON(const char *svgString){
       copy = 1;
       numVals++;
       cpyIdx=0;
-      if(svgString[i+1]=='\"')
+      if(svgString[i]=='\"'){
         i++;
+      }
     }
-
     if(copy && (svgString[i] == '\"'|| svgString[i] == ',')){
       buffer[cpyIdx] = '\0';
       toReturn = realloc(toReturn, sizeof(char*) *numVals);
@@ -1099,6 +1164,14 @@ char** valuesJSON(const char *svgString){
   
   return toReturn;
   
+}
+Attribute* JSONtoAttribute(const char* attrString){
+  char** vals = valuesJSON(attrString);
+  Attribute *toReturn = malloc(sizeof(Attribute));
+  toReturn->name = vals[0];
+  toReturn->value = vals[1];
+  free(vals);
+  return toReturn;
 }
 SVGimage* JSONtoSVG(const char* svgString){
   SVGimage* toReturn = malloc(sizeof(SVGimage));
