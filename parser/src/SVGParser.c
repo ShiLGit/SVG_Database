@@ -1123,7 +1123,7 @@ int setAttrFile(char* fname, char* json, elementType elemType, int elemIndex){
   }
   Attribute *new_attr = JSONtoAttribute(json);
   setAttribute(svg, elemType, elemIndex, new_attr);
-  if(validateSVGimage(svg, "svg.xsd")==false){
+  if(validateSVGimage(svg, "parser/svg.xsd")==false){
     return -1;
   }
 

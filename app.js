@@ -24,7 +24,8 @@ const portNum = process.argv[2];
 const svgParse = ffi.Library('./libsvgparse.so', {
   'fileNameToJSON':['string', ['string']],
   'fileNameToDetailedJSON':['string', ['string']],
-  'getAttribute':['string', ['string', 'int', 'int']]
+  'getAttribute':['string', ['string', 'int', 'int']],
+  'setAttrFile': ['int', ['string', 'string', 'int', 'int']]
 });
 
 //respond to req for all images 
@@ -114,23 +115,32 @@ app.get('/uploads/:name', function(req , res)
     }
   });*/
 });
+app.post('/updateattribute', function(req, res){
+  console.log('shitttttt!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+  const reqData = req.body;
+  console.log(JSON.stringify(reqData.attr));
+  let flag = svgParse.setAttrFile('uploads/'+reqData.filename, JSON.stringify(reqData.attr), enumerate(reqData.type), reqData.num-1);
+  console.log(req.body);
+  res.send(null);
+});
+function enumerate(str){
+  if(str == 'circ'){
+    return 1;
+  }else if (str == 'rect'){
+    return 2;
+  }else if (str == 'path'){
+    return 3;
+  }else if (str == 'group'){
+    return 4;
+  }
+  return 0;
+}
 app.post('/attributes', function(req, res)
 {
   const reqData = req.body;
   let str = "[]";
-  console.log('DATA:', req.body);
+  str = svgParse.getAttribute("uploads/" + reqData.filename, enumerate(reqData.type), reqData.num-1);
 
-  console.log(str);
-  if(reqData.type == 'rect'){
-    str = svgParse.getAttribute("uploads/" + reqData.filename, 2, reqData.num-1);
-  }else if(reqData.type == 'circ'){
-    str = svgParse.getAttribute("uploads/" + reqData.filename, 1, reqData.num-1);
-  }else if(reqData.type == 'path'){
-    str = svgParse.getAttribute("uploads/" + reqData.filename, 3, reqData.num-1);
-  }else if(reqData.type == 'group'){
-    str = svgParse.getAttribute("uploads/" + reqData.filename, 4, reqData.num-1);
-  }
-  console.log(str);
   const json = `{"attr": ${str}}`
   console.log(json);
   res.send(json);
@@ -146,7 +156,6 @@ app.post('/attributes', function(req, res)
     }
   });*/
 });
-
 
 //******************** Your code goes here ******************** 
 

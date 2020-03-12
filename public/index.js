@@ -153,15 +153,18 @@ $(document).ready(function() {
          */
         e.preventDefault();
         let attr = {name: $('#new-attr-key').val(), value: $('#new-attr-value').val()};
-        let props2 = [...props];
-        console.log(props);
-        console.log(attr);
+        let props2 = JSON.parse(props);
+        props2.attr = attr;
+        console.log('props2:', props2);
         $.ajax({
             type: 'POST',
-            dataType: 'json/application',
-            url:'/update-attribute',
-            contentType: 'json/application',
-            data: null
+            url:'/updateattribute',
+            contentType: 'application/json',
+            data: JSON.stringify(props2),
+            success: function(data){
+                alert("SVG update successfully.");
+                //update whole page(file log)
+            }
         });
 
     });
