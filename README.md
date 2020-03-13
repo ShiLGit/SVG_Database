@@ -368,3 +368,4 @@ const JavaScriptObfuscator = require('javascript-obfuscator');
 10. Our callback function (for this module) should just return a hard coded JSON response
 
 11. The AJAX call gets a response back from our server (either a 200 OK or maybe an error like a 404 not found) and either calls the "success" callback function or the "fail" function. If the success is called, "data" contains the returned JSON, and we can use it to update elements, e.g.`$('#elementId').html('<div>' + data["somekey"] + '</div>');` where there is a "div" somewhere with the "id" "elementId".
+# fml
