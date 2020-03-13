@@ -1,3 +1,5 @@
+import { finalizingTransformersModule } from "javascript-obfuscator/src/container/modules/node-transformers/FinalizingTransformersModule";
+
 // Put all onload AJAX calls here, and event listeners
 $(document).ready(function() {
     const fileLog = document.getElementById('file-log');
@@ -282,9 +284,14 @@ $(document).ready(function() {
             type: 'POST',
             url: '/addshape/' + curFile,
             contentType: 'application/json',
+            dataType: 'application/json',
             data: JSON.stringify(arg),
             success: (d)=>{
-                alert("yay!");
+                alert();
+                console.log(d);
+            },
+            fail: (err)=>{
+                alert("Error: " + err);
             }
         })
     })

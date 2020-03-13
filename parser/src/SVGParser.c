@@ -1177,7 +1177,7 @@ char** valuesJSON(const char *svgString){
       toReturn[numVals-1] = malloc(strlen(buffer) + 1);
       strcpy(toReturn[numVals-1], buffer);
       copy = 0;
-      printf("\nstring = [%s]", buffer);
+     // printf("\nstring = [%s]", buffer);
     }else if (copy){
       buffer[cpyIdx] = svgString[i];
       cpyIdx++;
@@ -1226,9 +1226,8 @@ Rectangle* JSONtoRect(const char* svgString){
   toReturn->width = strtof(vals[3], NULL);
   toReturn->height = strtof(vals[4], NULL);
   strcpy(toReturn->units, vals[6]);
-printf("\nunni=%s", toReturn->units);
   for(int i = 0; i <5 ; i++)
-    free(vals);
+    free(vals[i]);
 
   return toReturn;
 }
