@@ -83,7 +83,8 @@
 
         </table>
         <div id = "attrview-wrapper">
-            <h4>View/Edit Attributes</h3>
+            <h3>Edit SVG</h3>
+            <h5>View Attribute</h5>
             <label for="svg-ele">Choose an element to view:</label>
             <select id="svg-ele">
                 <option value = 'placeholder'></option>
@@ -106,6 +107,19 @@
                 <label for="new-desc">Description:</label>
                 <input id = "new-desc" disabled/>
                 <input id = "new-td-subm" type = "submit" disabled>
+            </form>
+            <form id = "shape-form">
+                <h5>Add Shape</h5>
+                <div class = "add-shape">
+                    <input type="checkbox" id="Rect" value="Rect">
+                    <label for="Rect"> Add a Rectangle</label>        
+                </div>
+                <div class = "add-shape">
+                    <input type="checkbox" id="Rect" value="Rect">
+                    <label for="Rect">Add a Circle</label>    
+                </div>
+                
+                 <input id = "shape-subm" type = "submit" disabled/> 
             </form>
         </div>
     </div>
