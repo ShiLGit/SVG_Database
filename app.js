@@ -27,7 +27,9 @@ const svgParse = ffi.Library('./libsvgparse.so', {
   'getAttribute':['string', ['string', 'int', 'int']],
   'setAttrFile': ['int', ['string', 'string', 'int', 'int']],
   'setTDFile':['int', ['string', 'string']],
-  'makeEmpty': ['int', ['string']]
+  'makeEmpty': ['int', ['string']],
+  'addRectToFile': ['int', ['string', 'string']],
+  'addCircToFile': ['int', ['string', 'string']]
 });
 
 //respond to req for all images 
@@ -129,6 +131,7 @@ app.post('/updateattribute', function(req, res){
   console.log(JSON.stringify(reqData.attr));
   let flag = svgParse.setAttrFile('uploads/'+reqData.filename, JSON.stringify(reqData.attr), enumerate(reqData.type), reqData.num-1);
   console.log(flag, req.body);
+
   if(flag == -1){
     res.send(JSON.stringify({error: "Invalid attribute. Change was not saved."}));
   }else if( flag == 0){
@@ -142,6 +145,7 @@ app.post('/updatetd', function(req, res){
   const reqData = req.body;
   console.log(JSON.stringify(reqData));
   let flag =svgParse.setTDFile(reqData.filename, JSON.stringify(reqData));
+
   if(flag){
     res.send(JSON.stringify({success: "SVG changed successfully."}));
   }else{
@@ -149,6 +153,7 @@ app.post('/updatetd', function(req, res){
   }
 })
 function enumerate(str){
+
   if(str == 'circ'){
     return 1;
   }else if (str == 'rect'){
@@ -171,6 +176,7 @@ app.post('/create', function(req,res){
                 console.log("Duplicate file");
             }
         });
+
         if(dupe){
             return res.send({error: "File already exists"});
         }
@@ -202,7 +208,28 @@ app.post('/attributes', function(req, res)
     }
   });*/
 });
+app.post('/addshape/:file', function(req, res){
+  const arg = req.body;
+  if(!arg){
+    return res.send('ERROR!');
+  }
 
+  if(arg.rect){
+    console.log('adding r');
+    let flag = svgParse.addRectToFile("uploads/" + req.params.file, JSON.stringify(arg));
+    if(flag == 0){
+      return res.send("ERROR: Could not validate file after adding component (rect)");
+    }
+    console.log(flag)
+  }
+  if(arg.circ){
+    let flag = svgParse.addCircToFile("uploads/" + req.params.file, JSON.stringify(arg));
+    if(flag == 0){
+      return res.send("ERROR: Could not validate file after adding component (circ)");
+    }
+  }
+  return res.send({lol: "sma"});
+})
 //******************** Your code goes here ******************** 
 
 //Sample endpoint

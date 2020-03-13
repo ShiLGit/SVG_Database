@@ -267,6 +267,27 @@ $(document).ready(function() {
         //Very important line, it disable the page refresh.
         return false;
     }); 
+    $('#shape-form').submit(function(e){
+        e.preventDefault();
+        let arg = { rect: null, circ: null};
+        if($('#Rect').is(':checked')){ 
+            arg.rect = {x: $('#x').val(), y: $('#y').val(), w: $('#width').val(), h: $('#height').val(), numAttr: 0, units: $('#units-r').val()};
+            console.log(arg.rect);
+        }
+        if($('#Circ').is(':checked')){
+            arg.circ = {cx:$('#cx').val(),cy: $('#cy').val(), r:$('#radius').val(), numAttr: 0, units:$('#units-c').val() }
+        
+        }
+        $.ajax({
+            type: 'POST',
+            url: '/addshape/' + curFile,
+            contentType: 'application/json',
+            data: JSON.stringify(arg),
+            success: (d)=>{
+                alert("yay!");
+            }
+        })
+    })
     //HELPERS --------------------------------------------------------------------------------------
     function makeFViewEntry(ele){
         let entry = 
@@ -289,7 +310,6 @@ $(document).ready(function() {
         $('#new-desc').attr('disabled', !enabled);
         $('#new-td-subm').attr('disabled', !enabled);
     
-        $('#shape-form').attr('disabled', !enabled);
         $('#Rect').attr('disabled', !enabled);
         $('#Circ').attr('disabled', !enabled);
     }

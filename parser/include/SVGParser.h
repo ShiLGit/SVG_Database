@@ -20,6 +20,8 @@ char* getAttribute(char* fileName, elementType elemType, int elemIndex);
 int setAttrFile(char* fname, char* json, elementType elemType, int elemIndex);
 int setTDFile(char* fname, const char* json);
 int makeEmpty(char* fname);
+int addRectToFile(char* filename, char* rectJSON);
+int addCircToFile(char* filename, char* circJSON);
 //----------------------------------------------------
 //Represents a generic SVG element/XML node Attribute
 typedef struct  {

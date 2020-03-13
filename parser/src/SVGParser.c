@@ -532,7 +532,7 @@ void addComponent(SVGimage* image, elementType type, void* newElement){
     }
     Circle* c = (Circle*)newElement;
     if(vsvg_checkCirc(c)){
-      printf("\nValid Circle.");
+      //printf("\nValid Circle.");
       insertBack(image->circles, (void*)c);
       return;
     }
@@ -541,7 +541,7 @@ void addComponent(SVGimage* image, elementType type, void* newElement){
       return;
     Rectangle* r = (Rectangle*)newElement;
     if(vsvg_checkRect(r)){
-      printf("\nValid Rect.");
+     // printf("\nValid Rect.");
       insertBack(image->rectangles, newElement);
       return;
     }
@@ -1155,7 +1155,7 @@ int setAttrFile(char* fname, char* json, elementType elemType, int elemIndex){
 //takes svg json, returns array of its values ORDERED IN STRING; NO ERRORCHECKING
 char** valuesJSON(const char *svgString){
   char** toReturn = malloc(sizeof(char*));
-  
+  printf("\n%s", svgString);
   int numVals =0;
   char buffer[1000] = ""; 
   int len = strlen(svgString);
@@ -1177,7 +1177,7 @@ char** valuesJSON(const char *svgString){
       toReturn[numVals-1] = malloc(strlen(buffer) + 1);
       strcpy(toReturn[numVals-1], buffer);
       copy = 0;
-      //printf("\nstring = [%s]", buffer);
+      printf("\nstring = [%s]", buffer);
     }else if (copy){
       buffer[cpyIdx] = svgString[i];
       cpyIdx++;
@@ -1221,15 +1221,14 @@ Rectangle* JSONtoRect(const char* svgString){
   toReturn->otherAttributes = initializeList(&attributeToString, &deleteAttribute, &compareAttributes);
   
   char** vals = valuesJSON(svgString);
-  toReturn->x = strtof(vals[0], NULL);
-  toReturn->y = strtof(vals[1], NULL);
-  toReturn->width = strtof(vals[2], NULL);
-  toReturn->height = strtof(vals[3], NULL);
-  strcpy(toReturn->units, vals[4]);
-
-  for(int i = 0; i < 5; i++)
-    free(vals[i]);
-  free(vals);
+  toReturn->x = strtof(vals[1], NULL);
+  toReturn->y = strtof(vals[2], NULL);
+  toReturn->width = strtof(vals[3], NULL);
+  toReturn->height = strtof(vals[4], NULL);
+  strcpy(toReturn->units, vals[6]);
+printf("\nunni=%s", toReturn->units);
+  for(int i = 0; i <5 ; i++)
+    free(vals);
 
   return toReturn;
 }
@@ -1239,10 +1238,11 @@ Circle* JSONtoCircle(const char* svgString){
   toReturn->otherAttributes = initializeList(&attributeToString, &deleteAttribute, &compareAttributes);
 
   char** vals = valuesJSON(svgString);
-  toReturn->cx = strtof(vals[0], NULL);
-  toReturn->cy =strtof(vals[1], NULL);
-  toReturn->r = strtof(vals[2], NULL);
-  strcpy(toReturn->units, vals[3]);
+  
+  toReturn->cx = strtof(vals[2], NULL);
+  toReturn->cy =strtof(vals[3], NULL);
+  toReturn->r = strtof(vals[4], NULL);
+  strcpy(toReturn->units, vals[6]);
 
   for(int i = 0; i < 4; i++)
     free(vals[i]);
@@ -2536,7 +2536,6 @@ int numAttr(SVGimage* img){
     ctr += listLength(tmp->otherAttributes);
   }
   freeList(allPaths);
-
   return ctr;
 }
 int makeEmpty(char* fname){
@@ -2546,10 +2545,47 @@ int makeEmpty(char* fname){
   strcpy(toReturn->title, "");
   strcpy(toReturn->description, "");
   initLists(toReturn);
+
   if(!validateSVGimage(toReturn, "parser/svg.xsd")){
       return 0;
   }
   int flag = writeSVGimage(toReturn, fname);
   deleteSVGimage(toReturn);
   return flag;
+}
+int addRectToFile(char* filename, char* rectJSON){
+    SVGimage* toWrite = createValidSVGimage(filename, "parser/svg.xsd");
+    if(!toWrite)
+        return 0;
+    
+    Rectangle *r = JSONtoRect(rectJSON);
+    addComponent(toWrite, RECT, (void*)r);
+    int flag = validateSVGimage(toWrite, "parser/svg.xsd");
+
+    if(flag == true){
+        flag = writeSVGimage(toWrite, filename);
+    }else{
+        deleteSVGimage(toWrite);
+        return 0;
+    }
+    deleteSVGimage(toWrite);
+    return flag;
+}
+int addCircToFile(char* filename, char* circJSON){
+    SVGimage* toWrite = createValidSVGimage(filename, "parser/svg.xsd");
+    if(!toWrite)
+        return 0;
+    
+    Circle *r = JSONtoCircle(circJSON);
+    addComponent(toWrite, CIRC, (void*)r);
+    int flag = validateSVGimage(toWrite, "parser/svg.xsd");
+
+    if(flag == true){
+        flag = writeSVGimage(toWrite, filename);
+    }else{
+        deleteSVGimage(toWrite);
+        return 0;
+    }
+    deleteSVGimage(toWrite);
+    return flag;
 }
