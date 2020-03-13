@@ -111,12 +111,38 @@
             <form id = "shape-form">
                 <h5>Add Shape</h5>
                 <div class = "add-shape">
-                    <input type="checkbox" id="Rect" value="Rect">
-                    <label for="Rect"> Add a Rectangle</label>        
+                    <input type="checkbox" id="Rect" value="true" disabled>
+                    <label for="Rect">Add a Rectangle</label><br/>
+
+                    <label for="x"> x: </label> 
+                    <input type="text" id="x"><br/>
+
+                    <label for="y">y:</label> 
+                    <input type="text" id="y"><br/>
+
+                    <label for="width"> width: </label>                     
+                    <input type="text" id="width"><br/>
+
+                    <label for="height"> height: </label>                            
+                    <input type="text" id="height"><br/>
+                    
+                    <label for="units-r"> units: </label> 
+                    <input type="text" id="units-r" value = ""><br/>
                 </div>
                 <div class = "add-shape">
-                    <input type="checkbox" id="Rect" value="Rect">
-                    <label for="Rect">Add a Circle</label>    
+                    <input type="checkbox" id="Circ" value="true" disabled>
+                    <label for = "Circ">Add a Circle</label><br/>
+                    <label for="cx"> cx: </label> 
+                    <input type="text" id="cx"><br/>
+
+                    <label for="cy">cy:</label> 
+                    <input type="text" id="cy"><br/>
+
+                    <label for="radius"> radius: </label>                     
+                    <input type="text" id="radius"><br/>
+                    
+                    <label for="units-c"> units: </label> 
+                    <input type="text" id="units-c" value = ""><br/>
                 </div>
                 
                  <input id = "shape-subm" type = "submit" disabled/> 

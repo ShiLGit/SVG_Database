@@ -5,7 +5,8 @@ $(document).ready(function() {
     let props = {}; //properties of selected omponent
 
     updateLog();
-
+    toggleAddCirc(false);
+    toggleAddRect(false);
     //get all files for file laaaaaaaaaaaaaaaaaawg; render on screen
     function updateLog(){
         console.log("updateLog() called");
@@ -287,5 +288,47 @@ $(document).ready(function() {
         $('#new-title').attr('disabled', !enabled);
         $('#new-desc').attr('disabled', !enabled);
         $('#new-td-subm').attr('disabled', !enabled);
+    
+        $('#shape-form').attr('disabled', !enabled);
+        $('#Rect').attr('disabled', !enabled);
+        $('#Circ').attr('disabled', !enabled);
+    }
+    $('#Rect').change(function(){
+        if($('#Rect').is(':checked')){
+            toggleAddRect(true);
+            $('#shape-subm').attr('disabled', false);
+        }else{
+    
+            if(!$('#Circ').is(':checked')){
+                $('#shape-subm').attr('disabled', true);
+            }
+            toggleAddRect(false);
+        }
+    })
+    $('#Circ').change(function(){
+        if($('#Circ').is(':checked')){
+            toggleAddCirc(true);
+            $('#shape-subm').attr('disabled', false);
+        }else{
+            if(!$('#Rect').is(':checked')){
+                $('#shape-subm').attr('disabled', true);
+            }
+            toggleAddCirc(false);
+        }
+    })
+
+    function toggleAddRect(enabled){
+        $('#x').attr("disabled", !enabled);
+        $('#y').attr("disabled", !enabled);
+        $('#width').attr("disabled", !enabled);
+        $('#height').attr("disabled", !enabled);
+        $('#units-r').attr("disabled", !enabled);
+    }
+
+    function toggleAddCirc(enabled){
+        $('#cx').attr("disabled", !enabled);
+        $('#cy').attr("disabled", !enabled);
+        $('#radius').attr("disabled", !enabled);
+        $('#units-c').attr("disabled", !enabled);
     }
 });
