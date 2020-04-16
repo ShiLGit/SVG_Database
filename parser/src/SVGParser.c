@@ -1177,7 +1177,7 @@ char** valuesJSON(const char *svgString){
       toReturn[numVals-1] = malloc(strlen(buffer) + 1);
       strcpy(toReturn[numVals-1], buffer);
       copy = 0;
-     // printf("\nstring = [%s]", buffer);
+      printf("\nstring = [%s]", buffer);
     }else if (copy){
       buffer[cpyIdx] = svgString[i];
       cpyIdx++;
@@ -1226,6 +1226,7 @@ Rectangle* JSONtoRect(const char* svgString){
   toReturn->width = strtof(vals[3], NULL);
   toReturn->height = strtof(vals[4], NULL);
   strcpy(toReturn->units, vals[6]);
+printf("\nunni=%s", toReturn->units);
   for(int i = 0; i <5 ; i++)
     free(vals[i]);
 
@@ -2563,6 +2564,7 @@ int addRectToFile(char* filename, char* rectJSON){
 
     if(flag == true){
         flag = writeSVGimage(toWrite, filename);
+        printf("\nFile written.");
     }else{
         deleteSVGimage(toWrite);
         return 0;
@@ -2581,10 +2583,53 @@ int addCircToFile(char* filename, char* circJSON){
 
     if(flag == true){
         flag = writeSVGimage(toWrite, filename);
+        printf("\nFile written.");
+
     }else{
         deleteSVGimage(toWrite);
         return 0;
     }
     deleteSVGimage(toWrite);
+    return flag;
+}
+int scaleRect(char* filename, float factor){
+    SVGimage* toScale = createValidSVGimage(filename, "parser/svg.xsd");
+    if(!toScale)
+        return 0;
+
+    ListIterator iter = createIterator(toScale->rectangles);
+    void* elem;
+    while ((elem = nextElement(&iter)) != NULL){
+        Rectangle* tmp = (Rectangle*)elem;
+        tmp->x = tmp->x * factor;
+        tmp->y = tmp->y * factor;
+        tmp->width = tmp->width * factor;
+        tmp->height = tmp->height * factor;
+    }
+    int flag = validateSVGimage(toScale, "parser/svg.xsd");
+    if(flag == 0){
+        return 0;
+    }
+    flag = writeSVGimage(toScale, filename);
+    return flag;
+}
+int scaleCirc(char* filename, float factor){
+    SVGimage* toScale = createValidSVGimage(filename, "parser/svg.xsd");
+    if(!toScale)
+        return 0;
+
+    ListIterator iter = createIterator(toScale->circles);
+    void* elem;
+    while ((elem = nextElement(&iter)) != NULL){
+        Circle* tmp = (Circle*)elem;
+        tmp->cx = tmp->cx * factor;
+        tmp->cy = tmp->cy * factor;
+        tmp->r = tmp->r * factor;
+    }
+    int flag = validateSVGimage(toScale, "parser/svg.xsd");
+    if(flag == 0){
+        return 0;
+    }
+    flag = writeSVGimage(toScale, filename);
     return flag;
 }

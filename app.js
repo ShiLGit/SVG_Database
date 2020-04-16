@@ -29,7 +29,9 @@ const svgParse = ffi.Library('./libsvgparse.so', {
   'setTDFile':['int', ['string', 'string']],
   'makeEmpty': ['int', ['string']],
   'addRectToFile': ['int', ['string', 'string']],
-  'addCircToFile': ['int', ['string', 'string']]
+  'addCircToFile': ['int', ['string', 'string']],
+  'scaleRect': ['int', ['string', 'float']],
+  'scaleCirc': ['int', ['string', 'float']]
 });
 
 //respond to req for all images 
@@ -208,6 +210,26 @@ app.post('/attributes', function(req, res)
     }
   });*/
 });
+app.post('/scalerect/:file', function(req,res){
+  console.log('fnma:', req.params.file);
+  console.log(req.body);
+  let flag = svgParse.scaleRect('uploads/'+req.params.file, req.body.factor);
+  if(!flag){
+    return res.send("ERROR: Unable to scale rectangles.");
+  }else{
+    return res.send("Rects scaled successfully.");
+  }
+});
+app.post('/scalecirc/:file', function(req,res){
+  console.log('fnma:', req.params.file);
+  console.log(req.body);
+  let flag = svgParse.scaleCirc('uploads/'+req.params.file, req.body.factor);
+  if(!flag){
+    return res.send("ERROR: Unable to scale circs.");
+  }else{
+    return res.send("Circs scaled successfully.");
+  }
+});
 app.post('/addshape/:file', function(req, res){
   const arg = req.body;
   if(!arg){
@@ -217,28 +239,27 @@ app.post('/addshape/:file', function(req, res){
   if(arg.rect){
     console.log('adding r');
     let flag = svgParse.addRectToFile("uploads/" + req.params.file, JSON.stringify(arg));
+    console.log(flag)
+
     if(flag == 0){
       return res.send("ERROR: Could not validate file after adding component (rect)");
+    }else{
+      return res.send("Rect saved successfully.");
     }
-    console.log(flag)
   }
   if(arg.circ){
     let flag = svgParse.addCircToFile("uploads/" + req.params.file, JSON.stringify(arg));
+    console.log(flag)
+
     if(flag == 0){
       return res.send("ERROR: Could not validate file after adding component (circ)");
+    }else{
+      return res.send("Circ saved successfully.");
     }
   }
-  return res.send({lol: "sma"});
+  res.send(null);
 })
-//******************** Your code goes here ******************** 
 
-//Sample endpoint
-app.get('/someendpoint', function(req , res){
-  let retStr = req.query.name1 + " " + req.query.name2;
-  res.send({
-    foo: retStr
-  });
-});
 
 app.listen(portNum);
 console.log('Running app at localhost: ' + portNum); 

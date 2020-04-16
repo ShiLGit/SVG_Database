@@ -22,6 +22,8 @@ int setTDFile(char* fname, const char* json);
 int makeEmpty(char* fname);
 int addRectToFile(char* filename, char* rectJSON);
 int addCircToFile(char* filename, char* circJSON);
+int scaleRect(char* filename, float factor);
+int scaleCirc(char* filename, float factor);
 //----------------------------------------------------
 //Represents a generic SVG element/XML node Attribute
 typedef struct  {

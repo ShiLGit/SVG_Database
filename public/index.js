@@ -1,5 +1,3 @@
-import { finalizingTransformersModule } from "javascript-obfuscator/src/container/modules/node-transformers/FinalizingTransformersModule";
-
 // Put all onload AJAX calls here, and event listeners
 $(document).ready(function() {
     const fileLog = document.getElementById('file-log');
@@ -23,7 +21,9 @@ $(document).ready(function() {
                     //build table row 
                     let row = `<tr>
                         <td>
-                            <img src = "${files[i].fileName}"/>
+                        <a href ="${files[i].fileName}" download/>
+                            <img src = "${files[i].fileName}"  download/>
+                        </a>
                         </td>
                         <td ><a href = "${files[i].fileName}" download/>${files[i].fileName}</td>
                         <td>${files[i].fileSize}</td>
@@ -38,6 +38,9 @@ $(document).ready(function() {
                 let options = "";
                 for(let i = 0; i < files.length; i++){           
                     options += `<option value="${files[i].fileName}">${files[i].fileName}</option>`;
+                }
+                if(allSvgs.length >= 5){
+                    fileLog.setAttribute("overflow-y", "scroll");
                 }
                 document.getElementById("svg-name").innerHTML = options;
                  
@@ -141,7 +144,43 @@ $(document).ready(function() {
         document.getElementById('new-title').value = data.title;
         document.getElementById('new-desc').value =data.desc;
     }
+    $('#scale-rect-form').submit(e=>{
+        let val = $('#scale-rect').val();
+        if(isNaN(val) || val <= 0){
+            e.preventDefault();
+            return alert("Error: invalid scale factor.");
+        }
+        let arg = {factor: val};
+        console.log(curFile)
+        $.ajax({
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(arg),
+            url: '/scalerect/' + curFile,
+            success: function(dat){
+                alert(dat);
+            }
+        })
+    })
+    $('#scale-circ-form').submit(e=>{
 
+        let val = $('#scale-circ').val();
+        if(isNaN(val) || val <= 0){
+            e.preventDefault();
+            return alert("Error: invalid scale factor.");
+        }
+        let arg = {factor: val};
+        console.log(curFile)
+        $.ajax({
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(arg),
+            url: '/scalecirc/' + curFile,
+            success: function(dat){
+                alert(dat);
+            }
+        })
+    })
     //EDITING/ADDING ATTRIBUTES FROM FILELOG--------------------------------------------------------
     $('#attr-form').submit((e)=>{
         e.preventDefault();
@@ -234,7 +273,8 @@ $(document).ready(function() {
         let data = {name: $('#new-fname').val()};
         //input check 
         if(data.name.indexOf(".svg") == -1){
-            data.name = data.name.concat(".svg");
+            e.preventDefault();
+            return alert("Error: invalid file name.");
         }
         console.log(data);
 
@@ -254,44 +294,38 @@ $(document).ready(function() {
             }
         });
     })
-    $('#uploadForm').submit(function() {
-        alert(".");
-        $(this).ajaxSubmit({
-            error: function(xhr) {
-                alert(xhr.status);
-                status('Error: ' + xhr.status);
-            },
-            success: function(response) {
-                alert(response);
-                console.log(response);
-            }
-        });
-        //Very important line, it disable the page refresh.
-        return false;
-    }); 
     $('#shape-form').submit(function(e){
-        e.preventDefault();
         let arg = { rect: null, circ: null};
         if($('#Rect').is(':checked')){ 
             arg.rect = {x: $('#x').val(), y: $('#y').val(), w: $('#width').val(), h: $('#height').val(), numAttr: 0, units: $('#units-r').val()};
+            
+            if(isNaN(arg.rect.x) || isNaN(arg.rect.y) || isNaN(arg.rect.w) || isNaN(arg.rect.h)){
+                e.preventDefault();
+                return alert("Invalid input: unexpected nonnumeric input.");
+            }
             console.log(arg.rect);
         }
         if($('#Circ').is(':checked')){
             arg.circ = {cx:$('#cx').val(),cy: $('#cy').val(), r:$('#radius').val(), numAttr: 0, units:$('#units-c').val() }
-        
+            if(isNaN(arg.circ.cx) || isNaN(arg.circ.cy) || isNaN(arg.circ.r)){
+                e.preventDefault();
+                return alert("Invalid input: uenxpected nonnumeric input.");
+            }
         }
         $.ajax({
             type: 'POST',
             url: '/addshape/' + curFile,
             contentType: 'application/json',
-            dataType: 'application/json',
             data: JSON.stringify(arg),
             success: (d)=>{
-                alert();
-                console.log(d);
+               console.log(d);
+               if(d){
+                alert(d);
+               }
             },
             fail: (err)=>{
-                alert("Error: " + err);
+                alert(err);
+                e.preventDefault();
             }
         })
     })
@@ -319,6 +353,12 @@ $(document).ready(function() {
     
         $('#Rect').attr('disabled', !enabled);
         $('#Circ').attr('disabled', !enabled);
+
+        $('#scale-circ').attr('disabled', !enabled);
+        $('#scale-rect').attr('disabled', !enabled);
+        $('#submscaler').attr('disabled', !enabled);
+        $('#submscalec').attr('disabled', !enabled);
+
     }
     $('#Rect').change(function(){
         if($('#Rect').is(':checked')){
