@@ -40,11 +40,12 @@ app.get('/db', async function(req, res, next){
   let connection;
   try{
     connection = await mysql.createConnection({
-      host: 'dursley.socs.uoguelph.ca',
-      user: config.USERNAME,
-      password:config.PASSWORD,
-      database: 'svgdb'
+      host     : config.host,
+      user     : config.user,
+      password : config.password,
+      database : config.database
     });
+    console.log("I CONNECTED WTF?");
   }catch(e){
     console.log("QUERYERROR: " + e);
   }
@@ -278,4 +279,3 @@ app.post('/addshape/:file', function(req, res){
 
 app.listen(portNum);
 console.log('Running app at localhost: ' + portNum);
-console.log('Username: ' + config.USERNAME + "; PW: " + config.PASSWORD);
