@@ -8,6 +8,8 @@ const express = require("express");
 const app     = express();
 const path    = require("path");
 const fileUpload = require('express-fileupload');
+const config = require('./config.js');
+const mysql = require('mysql2/promise');
 
 app.use(express.json());
 app.use(fileUpload());
@@ -34,7 +36,20 @@ const svgParse = ffi.Library('./libsvgparse.so', {
   'scaleCirc': ['int', ['string', 'float']]
 });
 
-//respond to req for all images 
+app.get('/db', async function(req, res, next){
+  let connection;
+  try{
+    connection = await mysql.createConnection({
+      host: 'dursley.socs.uoguelph.ca',
+      user: config.USERNAME,
+      password:config.PASSWORD,
+      database: 'svgdb'
+    });
+  }catch(e){
+    console.log("QUERYERROR: " + e);
+  }
+});
+//respond to req for all images
 app.get('/all',function(req,res){
 
   fs.readdir(path.join(__dirname+'/uploads'), function (err, files) {
@@ -43,11 +58,11 @@ app.get('/all',function(req,res){
     //handling error
     if (err) {
         return console.log('Unable to scan directory: ' + err);
-    } 
+    }
     //listing all files using forEach
     files.forEach(function (file) {
       const str = svgParse.fileNameToJSON("uploads/" + file)
-      //run this block if the SVG is valid 
+      //run this block if the SVG is valid
       if(!(!str || str=="{}")){
         let stats = fs.statSync(path.join(__dirname + '/uploads/' + file));
         const ele = JSON.parse(str);
@@ -120,8 +135,8 @@ app.get('/uploads/:name', function(req , res)
   fs.stat('uploads/' + req.params.name, function(err, stat) {
     if(err == null) {
       //res.sendFile(path.join(__dirname+'/uploads/' + req.params.name));
-      
-    
+
+
     } else {
       console.log('Error in file downloading route: '+err);
       res.send('');
@@ -186,7 +201,7 @@ app.post('/create', function(req,res){
         if(!flag){
             return res.send({error: "Could not make file."});
         }
-        return res.send({success: "Successfully created " + name +"."});    
+        return res.send({success: "Successfully created " + name +"."});
       });
 });
 app.post('/attributes', function(req, res)
@@ -202,8 +217,8 @@ app.post('/attributes', function(req, res)
   fs.stat('uploads/' + req.params.name, function(err, stat) {
     if(err == null) {
       //res.sendFile(path.join(__dirname+'/uploads/' + req.params.name));
-      
-    
+
+
     } else {
       console.log('Error in file downloading route: '+err);
       res.send('');
@@ -262,4 +277,5 @@ app.post('/addshape/:file', function(req, res){
 
 
 app.listen(portNum);
-console.log('Running app at localhost: ' + portNum); 
+console.log('Running app at localhost: ' + portNum);
+console.log('Username: ' + config.USERNAME + "; PW: " + config.PASSWORD);

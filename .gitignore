@@ -2,3 +2,5 @@ node_modules
 *.svg
 *.so
 *.code-workspace
+config.js
+dbtest.js
