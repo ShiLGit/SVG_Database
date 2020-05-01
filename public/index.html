@@ -164,16 +164,37 @@
         </div>
     </div>
 </div>
+
 <br/>
 <hr/>
 <br/>
-    <button type ="button" class = "collapsible">
-        Database
-    </button>
-    <div class = "collapsible-content">
-        <p>What is up dawgaa?</p>
-    </div>
-    <script src="/index.js"></script>
+
+<!--COLLAPSIBLE #3-->
+<button type ="button" class = "collapsible">
+    Database
+</button>
+<div class = "collapsible-content">
+    <form>
+        <h3>Database Login</h3>
+        <label for = "dblogin-uname">Username</label>
+        <input id = "dblogin-uname" type = "text"  placeholder="Username" class = "form-control"/>
+
+        <label for = "dblogin-pw">Password</label>
+        <input id = "dblogin-pw" type = "text"  placeholder="Password" class = "form-control"/>
+
+        <label for = "dblogin-dbname">Database Name</label>
+        <input id = "dblogin-dbname" type = "text"  placeholder="Database Name" class = "form-control"/>
+
+
+        <label for = "dblogin-hostname">Database Hostname</label>
+        <input id = "dblogin-hostname" type = "text"  placeholder="Hostname" class = "form-control"/>
+        
+        <input type = "submit" style = "margin:10px" class = "btn btn-primary mb-2"/>
+    </form>
+    <p>What is up dawgaa?</p>
+</div>
+<script src="/index.js"></script>
+
 </body>
 </html>
 
