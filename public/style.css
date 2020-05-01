@@ -21,6 +21,28 @@ a:link:hover {
     cursor: hand;
 }
 /*UR CUSTOM CSSSSSSSSSSSS*/
+.collapsible{
+    width: 100%;
+    background-color: cornflowerblue;
+    font-size: 24px;
+    font-weight: bold; 
+    transition: 0.4s ease-out;
+    padding: 10px;
+
+    border: none;
+    cursor:pointer;
+}
+.active, .collapsible:hover{
+ background-color: bisque;
+}
+.collapsible-content{
+    max-height: 0;
+    display:none;
+    padding: 20px;
+    color: red;
+    background-color: bisque;
+    transition: 0.4s ease-out;
+}
 h2{
     margin-top: 15px;
 }

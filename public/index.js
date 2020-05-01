@@ -4,6 +4,24 @@ $(document).ready(function() {
     let curFile = ""; //file open in file viewer
     let props = {}; //properties of selected omponent
 
+    //COLLAPSIBLES >> SET BEHAVIOR
+    const collapsibles = document.getElementsByClassName("collapsible");
+
+    for(let i = 0; i < collapsibles.length; i++){
+        collapsibles[i].nextElementSibling.style.display = "none";
+        collapsibles[i].addEventListener("click", ()=>{
+            collapsibles[i].classList.toggle("active");
+            const content = collapsibles[i].nextElementSibling;
+            console.log(content.style.display);
+            if(content.style.display === "none"){
+                content.style.display ="block";
+            }else{
+                content.style.display = "none";
+            }
+        })
+    }
+
+
     updateLog();
     toggleAddCirc(false);
     toggleAddRect(false);

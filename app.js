@@ -45,9 +45,11 @@ app.get('/db', async function(req, res, next){
       password : config.password,
       database : config.database
     });
-    console.log("I CONNECTED WTF?");
+    //create table if not existing 
   }catch(e){
     console.log("QUERYERROR: " + e);
+  }finally{
+    if (connection && connection.end) connection.end();
   }
 });
 //respond to req for all images
