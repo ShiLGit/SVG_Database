@@ -24,10 +24,16 @@
     <p></p>
     <img src="rects.svg">
     -->
-    <h1>SVG IMAGE VIEWER</h1>
+    <h1>SVG Image Viewer</h1>
+    <h3>This is a simple SVG database that allows you to create/view/edit SVG images.
+        Instructions are as follows:
+        1. Host a database with MySQL; initialize all the tables lmaoooo 
+        2. Log in to access the database 
+        3. You now have access to SVG Image Viewer's full functionality!
+    </h3>
     <button class = "collapsible">File Log</button>
-    <div class = "collapsible-content">
-    <img id = "sample"/>
+
+<div class = "collapsible-content">
     <div class = "table-wrapper1">
         <table id = "file-log">
             <tr>
@@ -41,23 +47,7 @@
             </tr>
         </table>
     </div>
-    <div id = "new-form-wrapper">
-        <h4>New Entries</h4>
-        <form id="uploadForm"
-            enctype="multipart/form-data"
-            action="/upload"
-            method="post">
-            <h5>Upload New</h5>
-            <input type="file" name="uploadFile" required />
-            <input type="submit" value="Upload SVG" name="submit">
-        </form>
-        <form id = 'create-form'>
-            <h5>Create SVG</h5>
-            <input id = "new-fname" type = "text" required/>
-            <input type = "submit" value = "Create SVG"/>
-        </form>
-
-    </div>
+   
     </div>
         <!--<form id = "file-upload-form" action ='/upload'>
         <h4>Upload new file</h4>
@@ -69,8 +59,56 @@
     <hr/>
     <br/>
     
+   
+
+<br/>
+<hr/>
+<br/>
+
+<!--COLLAPSIBLE #3-->
+<button type ="button" class = "collapsible">
+    Database
+</button>
+<div class = "collapsible-content">
+    
+    <form id = dblogin-form>
+        <h3>Database Login</h3>
+        <label for = "dblogin-uname">Username</label>
+        <input id = "dblogin-uname" type = "text"  placeholder="Username" class = "form-control" required/>
+
+        <label for = "dblogin-pw">Password</label>
+        <input id = "dblogin-pw" type = "text"  placeholder="Password" class = "form-control" required/>
+
+        <label for = "dblogin-dbname">Database Name</label>
+        <input id = "dblogin-dbname" type = "text"  placeholder="Database Name" class = "form-control" required/>
+
+
+        <label for = "dblogin-hostname">Database Hostname</label>
+        <input id = "dblogin-hostname" type = "text"  placeholder="Hostname" class = "form-control" required/>
+        
+        <input type = "submit" style = "margin:10px" class = "btn btn-primary mb-2"/>
+    </form>
+
+<!--START OF FVIEW-->
     <button class = "collapsible">File View</button>
     <div class = "collapsible-content">
+        <div id = "new-form-wrapper">
+            <h4>New Entries</h4>
+            <form id="uploadForm"
+                enctype="multipart/form-data"
+                action="/upload"
+                method="post">
+                <h5>Upload New</h5>
+                <input type="file" name="uploadFile" required />
+                <input type="submit" value="Upload SVG" name="submit">
+            </form>
+            <form id = 'create-form'>
+                <h5>Create SVG</h5>
+                <input id = "new-fname" type = "text" required/>
+                <input type = "submit" value = "Create SVG"/>
+            </form>
+    
+        </div>
     <form id = "file-select-form">
         <label for="svg-name">Choose a file to view:</label>
         <select id="svg-name" name="svg" required = true>
@@ -80,6 +118,7 @@
 
 
     <div class = "table-wrapper1">
+
         <img id = "file-view-img" src = "" alt = "image"/>
 
         <table id = "file-view">
@@ -145,7 +184,7 @@
                     <input type="text" id="radius" required><br/>
                     
                     <label for="units-c"> units: </label> 
-                    <input type="text" id="units-c" value = ""><br/>
+                    <input type="text" id="units-c"><br/>
                 </div>
                 
                  <input id = "shape-subm" type = "submit" disabled/> 
@@ -164,34 +203,7 @@
         </div>
     </div>
 </div>
-
-<br/>
-<hr/>
-<br/>
-
-<!--COLLAPSIBLE #3-->
-<button type ="button" class = "collapsible">
-    Database
-</button>
-<div class = "collapsible-content">
-    <form>
-        <h3>Database Login</h3>
-        <label for = "dblogin-uname">Username</label>
-        <input id = "dblogin-uname" type = "text"  placeholder="Username" class = "form-control"/>
-
-        <label for = "dblogin-pw">Password</label>
-        <input id = "dblogin-pw" type = "text"  placeholder="Password" class = "form-control"/>
-
-        <label for = "dblogin-dbname">Database Name</label>
-        <input id = "dblogin-dbname" type = "text"  placeholder="Database Name" class = "form-control"/>
-
-
-        <label for = "dblogin-hostname">Database Hostname</label>
-        <input id = "dblogin-hostname" type = "text"  placeholder="Hostname" class = "form-control"/>
-        
-        <input type = "submit" style = "margin:10px" class = "btn btn-primary mb-2"/>
-    </form>
-    <p>What is up dawgaa?</p>
+<!--END OF FVIEW-->
 </div>
 <script src="/index.js"></script>
 

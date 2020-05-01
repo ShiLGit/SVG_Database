@@ -37,6 +37,7 @@ const svgParse = ffi.Library('./libsvgparse.so', {
 });
 
 app.get('/db', async function(req, res, next){
+  console.log(req);
   let connection;
   try{
     connection = await mysql.createConnection({

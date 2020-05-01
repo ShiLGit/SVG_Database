@@ -88,6 +88,22 @@ $(document).ready(function() {
                 }
         })
     });
+    $('#dblogin-form').submit((e)=>{
+        e.preventDefault();
+        const loginData = {
+            host: $('#dblogin-hostname').val(),
+            user: $('#dblogin-uname').val(),
+            password: $('#dblogin-pw').val(),
+            database: $('#dblogin-dbname').val()
+        }
+        console.log(loginData);
+        $.ajax({
+            type: 'post',
+            dataType: 'json',
+            url: '/db',
+            data: JSON.stringify(loginData)
+        })
+    })
 
     /*
     Processes data returned from individual SVG request; renders onto file view table
