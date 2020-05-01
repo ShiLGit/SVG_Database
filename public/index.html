@@ -25,7 +25,8 @@
     <img src="rects.svg">
     -->
     <h1>SVG IMAGE VIEWER</h1>
-    <h2>File Log</h2>
+    <button class = "collapsible">File Log</button>
+    <div class = "collapsible-content">
     <img id = "sample"/>
     <div class = "table-wrapper1">
         <table id = "file-log">
@@ -57,6 +58,7 @@
         </form>
 
     </div>
+    </div>
         <!--<form id = "file-upload-form" action ='/upload'>
         <h4>Upload new file</h4>
         <input type="file" id="myfile" name="myfile" required = 'true'/>
@@ -67,7 +69,8 @@
     <hr/>
     <br/>
     
-    <h2>File View</h2>
+    <button class = "collapsible">File View</button>
+    <div class = "collapsible-content">
     <form id = "file-select-form">
         <label for="svg-name">Choose a file to view:</label>
         <select id="svg-name" name="svg" required = true>
@@ -160,7 +163,10 @@
             </form>
         </div>
     </div>
-
+</div>
+<br/>
+<hr/>
+<br/>
     <button type ="button" class = "collapsible">
         Database
     </button>
