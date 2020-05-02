@@ -98,11 +98,25 @@ $(document).ready(function() {
         }
         console.log(loginData);
         $.ajax({
-            type: 'post',
-            dataType: 'json',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(loginData),
             url: '/db',
-            data: JSON.stringify(loginData)
-        })
+
+            success: function(arg){
+                console.log(arg)
+
+                if(arg.error){
+                    alert("Error: database connection failed.\nLog: " + `'${arg.error.message}'`);
+                }else if (arg.success){
+                    alert(arg.success);
+                }
+            },
+            fail: function(err){
+                alert("ERROR:" + err.e);
+            }
+
+        });
     })
 
     /*
@@ -186,6 +200,7 @@ $(document).ready(function() {
         }
         let arg = {factor: val};
         console.log(curFile)
+        
         $.ajax({
             type: 'POST',
             contentType: 'application/json',
@@ -253,6 +268,7 @@ $(document).ready(function() {
         $.ajax({
             type: 'POST',
             url:'/updatetd',
+            dataType: 'application/json',
             contentType: 'application/json',
             data: JSON.stringify(arg),
 

@@ -36,21 +36,31 @@ const svgParse = ffi.Library('./libsvgparse.so', {
   'scaleCirc': ['int', ['string', 'float']]
 });
 
-app.get('/db', async function(req, res, next){
-  console.log(req);
+
+
+app.post('/db', async function(req, res, next){
+  const loginData = req.body;
   let connection;
+  let err = null;
+
   try{
     connection = await mysql.createConnection({
-      host     : config.host,
-      user     : config.user,
-      password : config.password,
-      database : config.database
+      host     : loginData.host,
+      user     : loginData.user,
+      password : loginData.password,
+      database : loginData.database
     });
     //create table if not existing 
   }catch(e){
-    console.log("QUERYERROR: " + e);
+    err = e;
   }finally{
     if (connection && connection.end) connection.end();
+
+    if(err){
+      res.send({error: err});
+    }else{
+      res.send({success: "Database connection successful."});
+    }
   }
 });
 //respond to req for all images
