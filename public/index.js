@@ -11,8 +11,8 @@ $(document).ready(function() {
         collapsibles[i].nextElementSibling.style.display = "none";
         collapsibles[i].addEventListener("click", ()=>{
             collapsibles[i].classList.toggle("active");
+
             const content = collapsibles[i].nextElementSibling;
-            console.log(content.style.display);
             if(content.style.display === "none"){
                 content.style.display ="block";
             }else{
@@ -110,6 +110,15 @@ $(document).ready(function() {
                     alert("Error: database connection failed.\nLog: " + `'${arg.error.message}'`);
                 }else if (arg.success){
                     alert(arg.success);
+                    
+                    //"remove" login form
+                    $('#collapsible-content-login').css("display", "none");
+                    $('#collapsible-fileview').prop("disabled", "false");
+                    $('form#dblogin-form :input[type=text]').each(function(){$(this).prop("disabled", "true");})
+                    $('#dblogin-form').css("display", "none");
+
+
+                    document.getElementById("collapsible-fileview").disabled = false;
                 }
             },
             fail: function(err){

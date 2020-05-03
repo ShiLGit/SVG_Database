@@ -70,27 +70,29 @@
     Database
 </button>
 <div class = "collapsible-content">
+    <button type = "button" class = "collapsible">Login</button>
+    <div class = "collapsible-content" id = "collapsible-content-login">
+        <form id = dblogin-form>
+            <h3>Database Login</h3>
+            <label for = "dblogin-uname">Username</label>
+            <input id = "dblogin-uname" type = "text"  placeholder="Username" class = "form-control" required/>
     
-    <form id = dblogin-form>
-        <h3>Database Login</h3>
-        <label for = "dblogin-uname">Username</label>
-        <input id = "dblogin-uname" type = "text"  placeholder="Username" class = "form-control" required/>
-
-        <label for = "dblogin-pw">Password</label>
-        <input id = "dblogin-pw" type = "text"  placeholder="Password" class = "form-control" required/>
-
-        <label for = "dblogin-dbname">Database Name</label>
-        <input id = "dblogin-dbname" type = "text"  placeholder="Database Name" class = "form-control" required/>
-
-
-        <label for = "dblogin-hostname">Database Hostname</label>
-        <input id = "dblogin-hostname" type = "text"  placeholder="Hostname" class = "form-control" required/>
-        
-        <input type = "submit" style = "margin:10px" class = "btn btn-primary mb-2"/>
-    </form>
+            <label for = "dblogin-pw">Password</label>
+            <input id = "dblogin-pw" type = "text"  placeholder="Password" class = "form-control" required/>
+    
+            <label for = "dblogin-dbname">Database Name</label>
+            <input id = "dblogin-dbname" type = "text"  placeholder="Database Name" class = "form-control" required/>
+    
+    
+            <label for = "dblogin-hostname">Database Hostname</label>
+            <input id = "dblogin-hostname" type = "text"  placeholder="Hostname" class = "form-control" required/>
+            
+            <input id = "dblogin-btn" type = "submit" style = "margin:10px" class = "btn btn-primary mb-2" value = "Login"/>
+        </form>    
+    </div>
 
 <!--START OF FVIEW-->
-    <button class = "collapsible">File View</button>
+    <button class = "collapsible" id = "collapsible-fileview" disabled>File View</button>
     <div class = "collapsible-content">
         <div id = "new-form-wrapper">
             <h4>New Entries</h4>
