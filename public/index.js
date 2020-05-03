@@ -21,7 +21,6 @@ $(document).ready(function() {
         })
     }
 
-
     updateLog();
     toggleAddCirc(false);
     toggleAddRect(false);
@@ -88,6 +87,7 @@ $(document).ready(function() {
                 }
         })
     });
+
     $('#dblogin-form').submit((e)=>{
         e.preventDefault();
         const loginData = {
@@ -113,12 +113,13 @@ $(document).ready(function() {
                     
                     //"remove" login form
                     $('#collapsible-content-login').css("display", "none");
-                    $('#collapsible-fileview').prop("disabled", "false");
-                    $('form#dblogin-form :input[type=text]').each(function(){$(this).prop("disabled", "true");})
+                    $('#collapsible-fileview').prop("disabled", false);
+
+                    $('form#dblogin-form :input[type=text]').each(function(){$(this).prop("disabled", true);})
                     $('#dblogin-form').css("display", "none");
 
-
-                    document.getElementById("collapsible-fileview").disabled = false;
+                    //replace login with thing
+                    $('#dblogout').css("display", "block");
                 }
             },
             fail: function(err){
@@ -127,7 +128,18 @@ $(document).ready(function() {
 
         });
     })
+    $('#logout').click(function(){
+        $('#dblogout').css("display", "none");
+        $("#dblogin-form").css("display", "block");
+        $('#collapsible-fileview').prop("disabled", true);
 
+        $('form#dblogin-form :input[type=text]').each(function(){
+            $(this).prop("disabled", false);
+            $(this).prop("value", "");  
+        })
+
+        alert("Log in to access file editing functionality.");
+    })
     /*
     Processes data returned from individual SVG request; renders onto file view table
     */
