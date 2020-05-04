@@ -9,16 +9,45 @@ $(document).ready(function() {
 
     for(let i = 0; i < collapsibles.length; i++){
         collapsibles[i].nextElementSibling.style.display = "none";
-        collapsibles[i].addEventListener("click", ()=>{
-            collapsibles[i].classList.toggle("active");
+        if(collapsibles[i].getAttribute('id') !== 'collapsible-login'){
+            collapsibles[i].addEventListener("click", ()=>{
+                collapsibles[i].classList.toggle("active");
+    
+                const content = collapsibles[i].nextElementSibling;
+                if(content.style.display === "none"){
+                    content.style.display ="block";
+                }else{
+                    content.style.display = "none";
+                }
+    
+                console.log(content.scrollHeight);
+                //animate scroll
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight =  content.scrollHeight + 100 + "px";
+                }
+            })
+    
+        }
+    }
+    document.getElementById("collapsible-login").onclick = function(e){   
+        const btn = document.getElementById("collapsible-login");
+        const content = btn.nextElementSibling;
+        if(content.style.display === "none"){
+            content.style.display ="block";
+        }else{
+            content.style.display = "none";
+        }
 
-            const content = collapsibles[i].nextElementSibling;
-            if(content.style.display === "none"){
-                content.style.display ="block";
-            }else{
-                content.style.display = "none";
-            }
-        })
+        console.log(content.scrollHeight);
+        //animate scroll
+        if (content.style.maxHeight) {
+            content.style.maxHeight = 500;
+        } else {
+            content.style.maxHeight =  content.scrollHeight + 700 + "px";
+        }
+        console.log('mh',content.style.maxHeight);
     }
 
     updateLog();
@@ -110,7 +139,8 @@ $(document).ready(function() {
                     alert("Error: database connection failed.\nLog: " + `'${arg.error.message}'`);
                 }else if (arg.success){
                     alert(arg.success);
-                    
+
+
                     //"remove" login form
                     $('#collapsible-content-login').css("display", "none");
                     $('#collapsible-fileview').prop("disabled", false);
@@ -118,7 +148,7 @@ $(document).ready(function() {
                     $('form#dblogin-form :input[type=text]').each(function(){$(this).prop("disabled", true);})
                     $('#dblogin-form').css("display", "none");
 
-                    //replace login with thing
+                    //replace with logout
                     $('#dblogout').css("display", "block");
                 }
             },

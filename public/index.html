@@ -70,7 +70,7 @@
     Database
 </button>
 <div class = "collapsible-content">
-    <button type = "button" class = "collapsible">Login</button>
+    <button type = "button" class = "collapsible" id = "collapsible-login">Login</button>
     <div class = "collapsible-content" id = "collapsible-content-login">
         <form id = dblogin-form>
             <h3>Database Login</h3>
@@ -89,7 +89,7 @@
             
             <input id = "dblogin-btn" type = "submit" style = "margin:10px" class = "btn btn-primary mb-2" value = "Login"/>
         </form>    
-        <div id = "dblogout" style = "display:none" disabled >
+        <div id = "dblogout" style = "display:none" disabled>
             <h4>You are logged in.</h4>
             <button class="btn btn-primary mb-2" id = "logout">Logout</button>
         </div>
@@ -98,23 +98,24 @@
 <!--START OF FVIEW-->
     <button class = "collapsible" id = "collapsible-fileview" disabled>File View</button>
     <div class = "collapsible-content">
-        <div id = "new-form-wrapper">
-            <h4>New Entries</h4>
-            <form id="uploadForm"
-                enctype="multipart/form-data"
-                action="/upload"
-                method="post">
-                <h5>Upload New</h5>
-                <input type="file" name="uploadFile" required />
-                <input type="submit" value="Upload SVG" name="submit">
-            </form>
-            <form id = 'create-form'>
-                <h5>Create SVG</h5>
-                <input id = "new-fname" type = "text" required/>
-                <input type = "submit" value = "Create SVG"/>
-            </form>
-    
-        </div>
+        <button class = "collapsible">Upload/Create SVG</button>
+            <div id = "new-form-wrapper" class = "collapsible-content">
+                <form id="uploadForm"
+                    enctype="multipart/form-data"
+                    action="/upload"
+                    method="post">
+                    <h5>Upload New</h5>
+                    <input type="file" name="uploadFile" required />
+                    <input type="submit" value="Upload SVG" name="submit">
+                </form>
+                <form id = 'create-form'>
+                    <h5>Create SVG</h5>
+                    <input id = "new-fname" type = "text" required/>
+                    <input type = "submit" value = "Create SVG"/>
+                </form>
+            </div>
+
+
     <form id = "file-select-form">
         <label for="svg-name">Choose a file to view:</label>
         <select id="svg-name" name="svg" required = true>

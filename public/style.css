@@ -32,15 +32,21 @@ a:link:hover {
     border: none;
     cursor:pointer;
 }
+.collapsible-secondary{
+    background-color: lavender;
+}
 .active, .collapsible:hover{
  background-color: bisque;
+ transition: ease-out;
 }
 .collapsible-content{
     display:none;
     padding: 20px;
     color: red;
     background-color: bisque;
-    transition: 0.4s ease-out;
+    transition: 0.2s ease-out;
+    /*overflow: hidden;*/
+   max-height: 0;
 }
 h2{
     margin-top: 15px;
