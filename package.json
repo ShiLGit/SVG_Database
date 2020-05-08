@@ -16,6 +16,6 @@
     "javascript-obfuscator": "^0.14.3",
     "mysql2": "^2.1.0",
     "node-gyp": "^6.1.0",
-    "nodemon": "^1.18.10"
+    "nodemon": "^1.19.4"
   }
 }

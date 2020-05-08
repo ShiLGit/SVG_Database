@@ -40,14 +40,12 @@ $(document).ready(function() {
             content.style.display = "none";
         }
 
-        console.log(content.scrollHeight);
         //animate scroll
         if (content.style.maxHeight) {
             content.style.maxHeight = 500;
         } else {
             content.style.maxHeight =  content.scrollHeight + "px";
         }
-        console.log('mh',content.style.maxHeight);
     }
 
     updateLog();
@@ -142,13 +140,11 @@ $('#file-select-form').submit(function(e){
                     alert("Error: database connection failed.\nLog: " + `'${arg.error.message}'`);
                 }else if (arg.success){
                     alert(arg.success);
-
-
                     //"remove" login form
                     $('#collapsible-content-login').css("display", "none");
                     $('#collapsible-fileview').prop("disabled", false);
 
-                    $('form#dblogin-form :input[type=text]').each(function(){$(this).prop("disabled", true);})
+                    //$('form#dblogin-form :input[type=text]').each(function(){$(this).prop("disabled", true);})
                     $('#dblogin-form').css("display", "none");
 
                     //replace with logout
@@ -175,13 +171,26 @@ $('#file-select-form').submit(function(e){
         alert("Log in to access file editing functionality.");
     })
 
-    $('#storefiles').click(function(){
+    $('#storefiles').click(function(e){
+        e.preventDefault();
+        const loginData = {
+            host: $('#dblogin-hostname').val(),
+            user: $('#dblogin-uname').val(),
+            password: $('#dblogin-pw').val(),
+            database: $('#dblogin-dbname').val()
+        };
+        console.log("STOREFILES", loginData);
         $.ajax({
-            type: 'GET',
+            type: 'POST',
             url: '/saveall',
-            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(loginData),
             success: function(res){
-                alert(res.success);
+                if(res.success){
+                    alert(res.success);
+                }else if(res.error){
+                    alert(res.error.message);
+                }
             },
             fail: function(err){
                 alert("Save failed.");

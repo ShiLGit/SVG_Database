@@ -37,7 +37,7 @@ const svgParse = ffi.Library('./libsvgparse.so', {
 });
 
 
-
+//see if db connection is valid
 app.post('/db', async function(req, res, next){
   const loginData = req.body;
   let connection;
@@ -50,7 +50,7 @@ app.post('/db', async function(req, res, next){
       password : loginData.password,
       database : loginData.database
     });
-    //create table if not existing 
+    
   }catch(e){
     err = e;
   }finally{
@@ -63,23 +63,59 @@ app.post('/db', async function(req, res, next){
     }
   }
 });
-//respond to saveall 
-app.get('/saveall', function(req, res){
-  res.send({success: "Imagis saved"});
-  let allFiles = [];
 
-  fs.readdir(path.join(__dirname + '/uploads'), function(err,files){
+//respond to saveall files in file log
+app.post('/saveall', async function(req, res, next){
+  const loginData = req.body;
+  console.log("LoginData = ", loginData);
+  let connection;
+  let err = null;
+  let warnings = "";
+
+  try{
+    connection = await mysql.createConnection({
+      host     : loginData.host,
+      user     : loginData.user,
+      password : loginData.password,
+      database : loginData.database
+    });
+    console.log("Login successful");
+
+    fs.readdir(path.join(__dirname + '/uploads'), function(err,files){  
+      if(err){
+        console.log(err);
+        return res.send({error: err});
+      }
   
+      files.forEach(async function(file){
+        console.log(file);
+
+        //get file data 
+        const data = svgParse.fileNameToJSON('uploads/' + file);
+        if(!data || data === "{}"){
+          warnings += `\n${file} is not a valid SVG and was not saved.`;
+          return; //CONTINUES FOREACH, DOES NOT BREAK THE WHOLE THING
+        }
+        console.log(`${file} data: ${data}`);
+  
+
+        const [rows, fields] = await connection.execute(`SELECT * FROM FILES WHERE FILES.file_name='${file}'`);
+      })
+    });
+  
+    //create table if not existing 
+  }catch(e){
+    err = e;
+  }finally{
+    if (connection && connection.end) connection.end();
     if(err){
       console.log(err);
-      return res.send({error: err});
+      res.send({error: err});
+    }else{
+      res.send({success: "Database connection successful."});
     }
-    files.foreach(function(file){
-      allFiles.push(file);
-    })
-  });
-  console.log('All files', file);
-
+  }
+ 
 });
 //respond to req for all images
 app.get('/all',function(req,res){
@@ -94,6 +130,7 @@ app.get('/all',function(req,res){
     //listing all files using forEach
     files.forEach(function (file) {
       const str = svgParse.fileNameToJSON("uploads/" + file)
+
       //run this block if the SVG is valid
       if(!(!str || str=="{}")){
         let stats = fs.statSync(path.join(__dirname + '/uploads/' + file));
