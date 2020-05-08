@@ -72,23 +72,29 @@ app.post('/saveall', async function(req, res, next){
   let err = null;
   let warnings = "";
   const allFiles = [];
+
   fs.readdir(path.join(__dirname + '/uploads'), async function(err,files){  
     if(err){
      console.log(err);
      return res.send({error: err});
     }
   
+    //parse filedata
     files.forEach(function(file){
       console.log(file);
 
       //get file data 
-      const data = svgParse.fileNameToJSON('uploads/' + file);
-      if(!data || data === "{}"){
+      const dataStats = svgParse.fileNameToJSON('uploads/' + file);
+      const dataDets = svgParse.fileNameToDetailedJSON('uploads/' + file);
+      if(!dataStats || dataStats === "{}"){
         warnings += `\n${file} is not a valid SVG and was not saved.`;
         return; //CONTINUES FOREACH, DOES NOT BREAK THE WHOLE THING
       }
-      allFiles.push({name: file, data: data});
-      console.log(`${file} data: ${data}`);
+      const dataStatsObj = JSON.parse(dataStats);
+      const dataDetsObj = JSON.parse(dataDets);
+      const fileData = {...dataStatsObj, title: dataDetsObj.title, desc: dataDetsObj.desc};
+
+      allFiles.push({name: file, data: fileData});
     });
 
     //db access attempt
@@ -100,9 +106,16 @@ app.post('/saveall', async function(req, res, next){
         database : loginData.database
       });
       console.log("Login successful");
-      console.log(allFiles[0].name);
+      console.log(allFiles[0]);
       const [rows, fields] = await connection.execute(`SELECT * FROM FILE WHERE FILE.file_name='${allFiles[0].name}'`);
-
+      console.log('rows', rows);
+      
+      //entry of this filename DNE, insert
+      if(rows.length ===0){
+        console.log('...saving file...')
+        connection.execute(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
+                            VALUES('${allFiles[0].name}', '${allFiles[0].title}', '${allFiles[0].desc}', ${allFiles[0].numRect}, ${allFiles[0].numCirc}, ${allFiles[0].numPaths}, ${allFiles[0].numGroups}, 08/05/20,10)`)
+       }
     }catch(e){
       err = e;
     }finally{
