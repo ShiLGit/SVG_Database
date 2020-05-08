@@ -71,51 +71,53 @@ app.post('/saveall', async function(req, res, next){
   let connection;
   let err = null;
   let warnings = "";
+  const allFiles = [];
+  fs.readdir(path.join(__dirname + '/uploads'), async function(err,files){  
+    if(err){
+     console.log(err);
+     return res.send({error: err});
+    }
+  
+    files.forEach(function(file){
+      console.log(file);
 
-  try{
-    connection = await mysql.createConnection({
-      host     : loginData.host,
-      user     : loginData.user,
-      password : loginData.password,
-      database : loginData.database
+      //get file data 
+      const data = svgParse.fileNameToJSON('uploads/' + file);
+      if(!data || data === "{}"){
+        warnings += `\n${file} is not a valid SVG and was not saved.`;
+        return; //CONTINUES FOREACH, DOES NOT BREAK THE WHOLE THING
+      }
+      allFiles.push({name: file, data: data});
+      console.log(`${file} data: ${data}`);
     });
-    console.log("Login successful");
 
-    fs.readdir(path.join(__dirname + '/uploads'), function(err,files){  
+    //db access attempt
+    try{
+      connection = await mysql.createConnection({
+        host     : loginData.host,
+        user     : loginData.user,
+        password : loginData.password,
+        database : loginData.database
+      });
+      console.log("Login successful");
+      console.log(allFiles[0].name);
+      const [rows, fields] = await connection.execute(`SELECT * FROM FILE WHERE FILE.file_name='${allFiles[0].name}'`);
+
+    }catch(e){
+      err = e;
+    }finally{
+      if (connection && connection.end) connection.end();
       if(err){
         console.log(err);
-        return res.send({error: err});
+        res.send({error: err});
+      }else{
+        res.send({success: "Database connection successful."});
       }
-  
-      files.forEach(async function(file){
-        console.log(file);
-
-        //get file data 
-        const data = svgParse.fileNameToJSON('uploads/' + file);
-        if(!data || data === "{}"){
-          warnings += `\n${file} is not a valid SVG and was not saved.`;
-          return; //CONTINUES FOREACH, DOES NOT BREAK THE WHOLE THING
-        }
-        console.log(`${file} data: ${data}`);
-  
-
-        const [rows, fields] = await connection.execute(`SELECT * FROM FILES WHERE FILES.file_name='${file}'`);
-      })
-    });
-  
-    //create table if not existing 
-  }catch(e){
-    err = e;
-  }finally{
-    if (connection && connection.end) connection.end();
-    if(err){
-      console.log(err);
-      res.send({error: err});
-    }else{
-      res.send({success: "Database connection successful."});
     }
-  }
- 
+  
+
+  });
+
 });
 //respond to req for all images
 app.get('/all',function(req,res){
