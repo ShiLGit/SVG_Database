@@ -45,7 +45,7 @@ $(document).ready(function() {
         if (content.style.maxHeight) {
             content.style.maxHeight = 500;
         } else {
-            content.style.maxHeight =  content.scrollHeight + 700 + "px";
+            content.style.maxHeight =  content.scrollHeight + "px";
         }
         console.log('mh',content.style.maxHeight);
     }
@@ -97,7 +97,9 @@ $(document).ready(function() {
         })
     }
 //FILEVIEWER STUFFFFFFFF----------------------------------------------------------------------------------------
-    $('#file-select-form').submit(function(e){
+
+//choose file to view    
+$('#file-select-form').submit(function(e){
         e.preventDefault();
         let svgName =document.getElementById("svg-name").value 
         curFile = svgName;
@@ -117,6 +119,7 @@ $(document).ready(function() {
         })
     });
 
+    //'Login' to database 
     $('#dblogin-form').submit((e)=>{
         e.preventDefault();
         const loginData = {
@@ -158,6 +161,7 @@ $(document).ready(function() {
 
         });
     })
+    //'Logout' of database
     $('#logout').click(function(){
         $('#dblogout').css("display", "none");
         $("#dblogin-form").css("display", "block");
@@ -170,6 +174,25 @@ $(document).ready(function() {
 
         alert("Log in to access file editing functionality.");
     })
+
+    $('#storefiles').click(function(){
+        $.ajax({
+            type: 'GET',
+            url: '/saveall',
+            dataType: 'json',
+            success: function(res){
+                alert(res.success);
+            },
+            fail: function(err){
+                alert("Save failed.");
+            } 
+        });
+    })
+
+    //END OF DB STUFF -------------------------------------
+
+
+
     /*
     Processes data returned from individual SVG request; renders onto file view table
     */
@@ -310,7 +333,7 @@ $(document).ready(function() {
             }
         });
     });
-
+    //edit svg title attr  form
     $('#td-form').submit((e)=>{
         e.preventDefault();
         let arg = {title: $("#new-title").val(), desc: $('#new-desc').val(), filename: 'uploads/'+curFile};
@@ -370,6 +393,7 @@ $(document).ready(function() {
             }
         })
     }
+    //create new svg form
     $('#create-form').submit(function(e){
         let data = {name: $('#new-fname').val()};
         //input check 
@@ -395,6 +419,7 @@ $(document).ready(function() {
             }
         });
     })
+    //edit shape form
     $('#shape-form').submit(function(e){
         let arg = { rect: null, circ: null};
         if($('#Rect').is(':checked')){ 

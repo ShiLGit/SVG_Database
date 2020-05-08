@@ -63,6 +63,24 @@ app.post('/db', async function(req, res, next){
     }
   }
 });
+//respond to saveall 
+app.get('/saveall', function(req, res){
+  res.send({success: "Imagis saved"});
+  let allFiles = [];
+
+  fs.readdir(path.join(__dirname + '/uploads'), function(err,files){
+  
+    if(err){
+      console.log(err);
+      return res.send({error: err});
+    }
+    files.foreach(function(file){
+      allFiles.push(file);
+    })
+  });
+  console.log('All files', file);
+
+});
 //respond to req for all images
 app.get('/all',function(req,res){
 

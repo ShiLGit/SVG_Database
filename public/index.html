@@ -123,8 +123,36 @@
         <input type="submit">
     </form>
 
+<!--DB FUNCTIONS START-->
+<div class="accordion md-accordion" id="dbfunctions" role="tablist" aria-multiselectable="true">
 
-    <div class = "table-wrapper1">
+  <!-- Accordion card -->
+  <div class="card">
+
+    <!-- Card header -->
+    <div class="card-header" role="tab" id="heading-dbfunctions">
+      <a class="collapsed" data-toggle="collapse" data-parent="#dbfunctions" href="#dbfunctions-body"
+        aria-expanded="false" aria-controls="dbfunctions-body">
+        <h5 class="mb-0">
+          Database functions <i class="fas fa-angle-down rotate-icon"></i>
+        </h5>
+      </a>
+    </div>
+
+    <!-- Card body -->
+    <div id="dbfunctions-body" class="collapse" role="tabpanel" aria-labelledby="heading-dbfunctions"
+      data-parent="#dbfunctions">
+        
+        <form id = "executequery">
+            <input type = "submit" value = "Execute Query"/>
+        </form>
+
+        <button id = "storefiles" class = "btn btn-primary btn-lg btn-block">Store all files</button>
+    </div>
+  </div>
+ <!--END OF ACCORDION 1--> 
+ 
+ <div class = "table-wrapper1">
 
         <img id = "file-view-img" src = "" alt = "image"/>
 

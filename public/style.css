@@ -26,7 +26,7 @@ a:link:hover {
     background-color: cornflowerblue;
     font-size: 24px;
     font-weight: bold; 
-    transition: 0.4s ease-out;
+    transition: 0.2s ease-out;
     padding: 10px;
 
     border: none;
@@ -37,14 +37,14 @@ a:link:hover {
 }
 .active, .collapsible:hover{
  background-color: bisque;
- transition: ease-out;
+ transition: 0.2s ease-out;
 }
 .collapsible-content{
     display:none;
     padding: 20px;
     color: red;
     background-color: bisque;
-    transition: 0.2s ease-out;
+    transition: 0.4s ease-out;
     /*overflow: hidden;*/
    max-height: 0;
 }
