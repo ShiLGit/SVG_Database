@@ -92,9 +92,9 @@ app.post('/saveall', async function(req, res, next){
       }
       const dataStatsObj = JSON.parse(dataStats);
       const dataDetsObj = JSON.parse(dataDets);
-      const fileData = {...dataStatsObj, title: dataDetsObj.title, desc: dataDetsObj.desc};
+      const fileData = {...dataStatsObj, title: dataDetsObj.title?dataDetsObj.title:null, name: file, desc: dataDetsObj.desc?dataDetsObj.desc:null};
 
-      allFiles.push({name: file, data: fileData});
+      allFiles.push(fileData);
     });
 
     //db access attempt
@@ -107,15 +107,20 @@ app.post('/saveall', async function(req, res, next){
       });
       console.log("Login successful");
       console.log(allFiles[0]);
-      const [rows, fields] = await connection.execute(`SELECT * FROM FILE WHERE FILE.file_name='${allFiles[0].name}'`);
-      console.log('rows', rows);
-      
-      //entry of this filename DNE, insert
-      if(rows.length ===0){
-        console.log('...saving file...')
-        connection.execute(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
-                            VALUES('${allFiles[0].name}', '${allFiles[0].title}', '${allFiles[0].desc}', ${allFiles[0].numRect}, ${allFiles[0].numCirc}, ${allFiles[0].numPaths}, ${allFiles[0].numGroups}, 08/05/20,10)`)
-       }
+
+      //For each file: check if DNE in database, enter info to FILE table if so
+      for(let i = 0; i < allFiles.length; i++){
+        let file = allFiles[i];
+        const [rows, fields] = await connection.execute(`SELECT * FROM FILE WHERE FILE.file_name='${file.name}'`);
+        console.log('rows', rows);
+        
+        //entry of this filename DNE, insert
+        if(rows.length ===0){
+          console.log('...saving file...')
+          await connection.execute(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
+                              VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${Date.now()}, 10)`)
+          }
+      }
     }catch(e){
       err = e;
     }finally{
