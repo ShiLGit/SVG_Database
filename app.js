@@ -86,13 +86,15 @@ app.post('/saveall', async function(req, res, next){
       //get file data 
       const dataStats = svgParse.fileNameToJSON('uploads/' + file);
       const dataDets = svgParse.fileNameToDetailedJSON('uploads/' + file);
+      const stats = fs.statSync(path.join(__dirname + '/uploads/' + file));
+
       if(!dataStats || dataStats === "{}"){
         warnings += `\n${file} is not a valid SVG and was not saved.`;
         return; //CONTINUES FOREACH, DOES NOT BREAK THE WHOLE THING
       }
       const dataStatsObj = JSON.parse(dataStats);
       const dataDetsObj = JSON.parse(dataDets);
-      const fileData = {...dataStatsObj, title: dataDetsObj.title?dataDetsObj.title:null, name: file, desc: dataDetsObj.desc?dataDetsObj.desc:null};
+      const fileData = {...dataStatsObj, size: stats.size, title: dataDetsObj.title?dataDetsObj.title:null, name: file, desc: dataDetsObj.desc?dataDetsObj.desc:null};
 
       allFiles.push(fileData);
     });
