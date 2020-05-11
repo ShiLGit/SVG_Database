@@ -37,6 +37,23 @@ const svgParse = ffi.Library('./libsvgparse.so', {
 });
 
 
+//parse data for FILE record given fname
+function parsedata_FILE(fname){
+  const dataStats = svgParse.fileNameToJSON('uploads/' + fname);
+  const dataDets = svgParse.fileNameToDetailedJSON('uploads/' +  fname);
+  const stats = fs.statSync(path.join(__dirname + '/uploads/' +  fname));
+  
+  if(!dataStats || dataStats === "{}"){
+    return {error: "Error parsing file data for " + fname}; //CONTINUES FOREACH, DOES NOT BREAK THE WHOLE THING
+  }
+
+  const dataStatsObj = JSON.parse(dataStats);
+  const dataDetsObj = JSON.parse(dataDets);
+  const fileData = {...dataStatsObj, size: stats.size, title: dataDetsObj.title?dataDetsObj.title:null, name:  fname, desc: dataDetsObj.desc?dataDetsObj.desc:null};
+  
+  console.log('fdata: ', fileData);
+  return {success: fileData};
+}
 //see if db connection is valid
 app.post('/db', async function(req, res, next){
   const loginData = req.body;
@@ -63,13 +80,58 @@ app.post('/db', async function(req, res, next){
     }
   }
 });
-app.get('/insertdl/:file', function(req, res){
+app.post('/insertdl/:file', async function(req, res, next){
   console.log("INSERTDL CALLED???");
-  res.send({success: "lol jk"});
-  
+
+  const connectionData = req.body;
+  console.log(connectionData);
+  let connection;
+  let successful = false;
+  const fname = req.params.file;
+
+  try{
+    connection = await mysql.createConnection({
+      host     : connectionData.host,
+      user     : connectionData.user,
+      password : connectionData.password,
+      database : connectionData.database
+    });
+    console.log("insertdl: dbconnection successful");
+
+    //INSERT FILE INTO DB IF NONEXISTING
+    const [rows, fields] = await connection.execute(`SELECT * FROM FILE WHERE FILE.file_name=+'${fname}'`);
+    console.log(rows);
+
+    if(rows.length === 0){
+      console.log("inserting");
+
+      //parse file data....
+      const data = parsedata_FILE(fname);
+      if(data.success){
+        const file= data.success;
+        await connection.execute(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
+                                  VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${Date.now()}, ${file.size})`)
+      }else if (data.error){
+        throw data.error;
+      }
+    }
+
+
+    //INSERT DOWNLOAD RECORD
+    
+  }catch(e){
+    console.log(e);
+    res.send({success: "lol jk"});
+
+  }finally{
+    if(connection && connection.end) connection.end();
+  }
 })
+
+
 //respond to saveall files in file log
 app.post('/saveall', async function(req, res, next){
+
   const loginData = req.body;
   console.log("LoginData = ", loginData);
   let connection;
@@ -88,19 +150,12 @@ app.post('/saveall', async function(req, res, next){
       console.log(file);
 
       //get file data 
-      const dataStats = svgParse.fileNameToJSON('uploads/' + file);
-      const dataDets = svgParse.fileNameToDetailedJSON('uploads/' + file);
-      const stats = fs.statSync(path.join(__dirname + '/uploads/' + file));
-
-      if(!dataStats || dataStats === "{}"){
-        warnings += `\n${file} is not a valid SVG and was not saved.`;
-        return; //CONTINUES FOREACH, DOES NOT BREAK THE WHOLE THING
+      const fileData = parsedata_FILE(file);
+      if(fileData.success){
+        allFiles.push(fileData.success);
+      }else if (fileData.error){
+        warnings += fileData.error;
       }
-      const dataStatsObj = JSON.parse(dataStats);
-      const dataDetsObj = JSON.parse(dataDets);
-      const fileData = {...dataStatsObj, size: stats.size, title: dataDetsObj.title?dataDetsObj.title:null, name: file, desc: dataDetsObj.desc?dataDetsObj.desc:null};
-
-      allFiles.push(fileData);
     });
 
     //db access attempt
@@ -112,17 +167,18 @@ app.post('/saveall', async function(req, res, next){
         database : loginData.database
       });
       console.log("Login successful");
-
       //For each file: check if DNE in database, enter info to FILE table if so
       for(let i = 0; i < allFiles.length; i++){
+
         let file = allFiles[i];
+        console.log("..file..", file);
         const [rows, fields] = await connection.execute(`SELECT * FROM FILE WHERE FILE.file_name='${file.name}'`);
         
         //entry of this filename DNE, insert
         if(rows.length ===0){
           console.log('...saving file...')
           await connection.execute(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
-                              VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${Date.now()}, ${file.size})`)
+                              VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${Date.now()}, ${file.size})`);
           }
       }
     }catch(e){
@@ -133,7 +189,7 @@ app.post('/saveall', async function(req, res, next){
         console.log(err);
         res.send({error: err});
       }else{
-        res.send({success: "Database connection successful."});
+        res.send({success: "Database connection successful." + warnings});
       }
     }
   

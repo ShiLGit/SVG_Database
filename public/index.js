@@ -204,10 +204,22 @@ $('#file-select-form').submit(function(e){
     //updates DOWNLOADS table (inserts new row)
     function insert_dl(fileName){
         console.log('insert_dl', fileName)
+        const loginData = {
+            host: $('#dblogin-hostname').val(),
+            user: $('#dblogin-uname').val(),
+            password: $('#dblogin-pw').val(),
+            database: $('#dblogin-dbname').val()
+        };
+        if(loginData === {})
+            return;
+        console.log(loginData);
+        
         $.ajax({
-            type: 'GET',
+            type: 'POST',
             url:'/insertdl/' + fileName,
             dataType: 'JSON',
+            contentType: 'application/JSON',
+            data: JSON.stringify(loginData),
             success: function (res){
                 alert(res)
             }
