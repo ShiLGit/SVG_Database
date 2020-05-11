@@ -51,6 +51,7 @@ $(document).ready(function() {
     updateLog();
     toggleAddCirc(false);
     toggleAddRect(false);
+
     //get all files for file laaaaaaaaaaaaaaaaaawg; render on screen
     function updateLog(){
         console.log("updateLog() called");
@@ -65,8 +66,8 @@ $(document).ready(function() {
                     //build table row 
                     let row = `<tr>
                         <td>
-                        <a href ="${files[i].fileName}" download/>
-                            <img src = "${files[i].fileName}"  download/>
+                        <a href ="${files[i].fileName}" download id = "a_${files[i].fileName}"/>
+                            <img src = "${files[i].fileName}"  id = "i_${files[i].fileName}" download/>
                         </a>
                         </td>
                         <td ><a href = "${files[i].fileName}" download/>${files[i].fileName}</td>
@@ -78,6 +79,8 @@ $(document).ready(function() {
                         </tr>`
     
                     fileLog.insertAdjacentHTML('beforeend', row);
+                    document.getElementById("i_" + files[i].fileName).onclick =  ()=> insert_dl(files[i].fileName);
+                    document.getElementById("a_" + files[i].fileName).onclick =  ()=> insert_dl(files[i].fileName);
                 }
                 let options = "";
                 for(let i = 0; i < files.length; i++){           
@@ -198,6 +201,18 @@ $('#file-select-form').submit(function(e){
         });
     })
 
+    //updates DOWNLOADS table (inserts new row)
+    function insert_dl(fileName){
+        console.log('insert_dl', fileName)
+        $.ajax({
+            type: 'GET',
+            url:'/insertdl/' + fileName,
+            dataType: 'JSON',
+            success: function (res){
+                alert(res)
+            }
+        })
+    }
     //END OF DB STUFF -------------------------------------
 
 

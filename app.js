@@ -63,7 +63,11 @@ app.post('/db', async function(req, res, next){
     }
   }
 });
-
+app.get('/insertdl/:file', function(req, res){
+  console.log("INSERTDL CALLED???");
+  res.send({success: "lol jk"});
+  
+})
 //respond to saveall files in file log
 app.post('/saveall', async function(req, res, next){
   const loginData = req.body;
@@ -108,19 +112,17 @@ app.post('/saveall', async function(req, res, next){
         database : loginData.database
       });
       console.log("Login successful");
-      console.log(allFiles[0]);
 
       //For each file: check if DNE in database, enter info to FILE table if so
       for(let i = 0; i < allFiles.length; i++){
         let file = allFiles[i];
         const [rows, fields] = await connection.execute(`SELECT * FROM FILE WHERE FILE.file_name='${file.name}'`);
-        console.log('rows', rows);
         
         //entry of this filename DNE, insert
         if(rows.length ===0){
           console.log('...saving file...')
           await connection.execute(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
-                              VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${Date.now()}, 10)`)
+                              VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${Date.now()}, ${file.size})`)
           }
       }
     }catch(e){
