@@ -458,6 +458,7 @@ $('#file-select-form').submit(function(e){
     
     //edit shape form
     $('#shape-form').submit(function(e){
+        e.preventDefault();
         let arg = { rect: null, circ: null, loginData: getLoginData()};
         if(!arg.loginData){
             return alert("Error: invalid db connection data. Try logging in again.");

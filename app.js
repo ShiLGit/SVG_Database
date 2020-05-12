@@ -412,20 +412,20 @@ app.post('/scalecirc/:file', function(req,res){
 });
 app.post('/addshape/:file', async function(req, res){
   const arg = req.body;
-
+  let desc = "";
   if(!arg){
     return res.send('ERROR!');
   }
   console.log(arg.loginData);
+
   if(arg.rect){
-    console.log('adding r');
     let flag = svgParse.addRectToFile("uploads/" + req.params.file, JSON.stringify(arg));
     console.log(flag)
 
     if(flag == 0){
       return res.send("ERROR: Could not validate file after adding component (rect)");
     }else{
-      return res.send("Rect saved successfully.");
+      desc += "Added rectangle: " + JSON.stringify(arg.rect); 
     }
   }
   if(arg.circ){
@@ -435,25 +435,42 @@ app.post('/addshape/:file', async function(req, res){
     if(flag == 0){
       return res.send("ERROR: Could not validate file after adding component (circ)");
     }else{
-      return res.send("Circ saved successfully.");
+      desc += "\nAdded circle: " + JSON.stringify(arg.circ);
     }
   }
-
-
+  let connection = null;
+  //db entry 
   try{
+    let loginData = arg.loginData;
     connection = await mysql.createConnection({
       host     : loginData.host,
       user     : loginData.user,
       password : loginData.password,
       database : loginData.database
     });
-    const [rows, fields] = await connection.execute(`SELECT svg_id FROM FILE.file_name = ${req.params.file}`)
+    const [rows, fields] = await connection.execute(`SELECT svg_id FROM FILE WHERE FILE.file_name = '${req.params.file}'`)
 
+    //parse, insert FILE record if DNE 
+    if(rows.length === 0){
+      const data = parsedata_FILE(req.params.file);
+      if(data.success){
+        const file= data.success;
+        await connection.execute(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
+                                  VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${Date.now()}, ${file.size})`)
+      }else{
+        throw data.error;
+      }
+    }else{
+      await connection.execute(`INSERT INTO IMG_CHANGE(change_type, change_summary, change_time, svg_id)
+                                                VALUES('ADD SHAPE', '${desc}', ${Date.now()}, ${rows[0].svg_id})`);
+    }
   }catch(e){
     console.log(e);
   }finally{
     if(connection && connection.end) connection.end();
   }
+  return res.send("Rect saved successfully.");
+  return res.send("Circ saved successfully.");
 
   res.send(null);
 })
