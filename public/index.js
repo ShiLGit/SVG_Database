@@ -123,13 +123,11 @@ $('#file-select-form').submit(function(e){
     //'Login' to database 
     $('#dblogin-form').submit((e)=>{
         e.preventDefault();
-        const loginData = {
-            host: $('#dblogin-hostname').val(),
-            user: $('#dblogin-uname').val(),
-            password: $('#dblogin-pw').val(),
-            database: $('#dblogin-dbname').val()
+        const loginData = getLoginData();
+        if(!loginData){
+            return alert("Error: invalid database connection data. Log out and try again.");
         }
-        console.log(loginData);
+        console.log('ldat:', loginData);
         $.ajax({
             type: 'POST',
             contentType: 'application/json',
@@ -176,12 +174,10 @@ $('#file-select-form').submit(function(e){
 
     $('#storefiles').click(function(e){
         e.preventDefault();
-        const loginData = {
-            host: $('#dblogin-hostname').val(),
-            user: $('#dblogin-uname').val(),
-            password: $('#dblogin-pw').val(),
-            database: $('#dblogin-dbname').val()
-        };
+        const loginData = getLoginData();
+        if(!loginData){
+            return alert("Error: invalid database connection data. Log out and try again.");
+        }
         console.log("STOREFILES", loginData);
         $.ajax({
             type: 'POST',
@@ -204,14 +200,10 @@ $('#file-select-form').submit(function(e){
     //updates DOWNLOADS table (inserts new row)
     function insert_dl(fileName){
         console.log('insert_dl', fileName)
-        const loginData = {
-            host: $('#dblogin-hostname').val(),
-            user: $('#dblogin-uname').val(),
-            password: $('#dblogin-pw').val(),
-            database: $('#dblogin-dbname').val()
-        };
-        if(loginData === {})
-            return;
+        const loginData = getLoginData();
+        if(!loginData){
+            return alert("Error: invalid database connection data. Log out and try again.");
+        }
         console.log(loginData);
         
         $.ajax({
@@ -429,6 +421,7 @@ $('#file-select-form').submit(function(e){
             }
         })
     }
+    
     //create new svg form
     $('#create-form').submit(function(e){
         let data = {name: $('#new-fname').val()};
@@ -437,7 +430,12 @@ $('#file-select-form').submit(function(e){
             e.preventDefault();
             return alert("Error: invalid file name.");
         }
-        console.log(data);
+        
+        const loginData = getLoginData();
+        if(!loginData){
+            alert("Error: invalid database connection data. Log out and try again.");
+        }
+        data.loginData = loginData;
 
         $.ajax({
             type: 'POST',
@@ -451,7 +449,9 @@ $('#file-select-form').submit(function(e){
                 }else{
                     alert(data.success);
                 }
-
+            },
+            fail: function(err){
+                alert("Error: " + err.error);
             }
         });
     })
@@ -559,5 +559,19 @@ $('#file-select-form').submit(function(e){
         $('#cy').attr("disabled", !enabled);
         $('#radius').attr("disabled", !enabled);
         $('#units-c').attr("disabled", !enabled);
+    }
+
+    //return db connection data; null if invalid
+    function getLoginData(){
+        const loginData = {
+            host: $('#dblogin-hostname').val(),
+            user: $('#dblogin-uname').val(),
+            password: $('#dblogin-pw').val(),
+            database: $('#dblogin-dbname').val()
+        }
+        if(loginData.host === "" || loginData.user === "" || loginData.password === "" || loginData.database === ""){
+            return null;
+        }
+        return loginData;
     }
 });

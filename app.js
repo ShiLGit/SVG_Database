@@ -282,19 +282,8 @@ app.get('/uploads/:name', function(req , res)
 {
   let json =svgParse.fileNameToDetailedJSON("uploads/" + req.params.name);
   res.send(JSON.parse(json));
-
-  /*wat does this do (old code)
-  fs.stat('uploads/' + req.params.name, function(err, stat) {
-    if(err == null) {
-      //res.sendFile(path.join(__dirname+'/uploads/' + req.params.name));
-
-
-    } else {
-      console.log('Error in file downloading route: '+err);
-      res.send('');
-    }
-  });*/
 });
+
 app.post('/updateattribute', function(req, res){
   const reqData = req.body;
   console.log(JSON.stringify(reqData.attr));
@@ -310,6 +299,7 @@ app.post('/updateattribute', function(req, res){
   }
 });
 
+//update title/desc
 app.post('/updatetd', function(req, res){
   const reqData = req.body;
   console.log(JSON.stringify(reqData));
@@ -321,8 +311,8 @@ app.post('/updatetd', function(req, res){
     res.send(JSON.stringify({error: 'Could not validate SVG.'}));
   }
 })
-function enumerate(str){
 
+function enumerate(str){
   if(str == 'circ'){
     return 1;
   }else if (str == 'rect'){
@@ -336,18 +326,21 @@ function enumerate(str){
 }
 app.post('/create', function(req,res){
     const name = req.body.name;
+    console.log(req.body.loginData);
+
+    //check if duplicate file name
     fs.readdir(path.join(__dirname+'/uploads'), function (err, files) {
         //listing all files using forEach
         let dupe = false;
         files.forEach(function (file) {
             if(file.toString() == name){
                 dupe = true;
-                console.log("Duplicate file");
             }
         });
 
         if(dupe){
-            return res.send({error: "File already exists"});
+          console.log("Error: duplicate file.")
+          return res.status(400).send({error: "File already exists"});
         }
         let flag = svgParse.makeEmpty("uploads/" + name);
         if(!flag){
