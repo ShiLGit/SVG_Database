@@ -105,7 +105,7 @@ app.post('/insertdl/:file', async function(req, res, next){
     console.log("insertdl: dbconnection successful");
 
     //INSERT FILE INTO DB IF NONEXISTING
-    const [rows, fields] = await connection.execute(`SELECT * FROM FILE WHERE FILE.file_name=+'${fname}'`);
+    const [rows, fields] = await connection.execute(`SELECT * FROM FILE WHERE FILE.file_name='${fname}'`);
 
     if(rows.length === 0){
       //parse, insert FILE record if DNE 
@@ -113,7 +113,7 @@ app.post('/insertdl/:file', async function(req, res, next){
       if(data.success){
         const file= data.success;
         await connection.execute(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
-                                  VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${Date.now()}, ${file.size})`)
+                                  VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${new Date().toLocaleString()}, ${file.size})`)
       }else if (data.error){
         throw data.error;
       }
@@ -174,14 +174,13 @@ app.post('/saveall', async function(req, res, next){
       for(let i = 0; i < allFiles.length; i++){
 
         let file = allFiles[i];
-        console.log("..file..", file);
         const [rows, fields] = await connection.execute(`SELECT * FROM FILE WHERE FILE.file_name='${file.name}'`);
         
         //entry of this filename DNE, insert
         if(rows.length ===0){
           console.log('...saving file...')
           await connection.execute(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
-                              VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${Date.now()}, ${file.size})`);
+                              VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${new Date().toLocaleString()}, ${file.size})`);
           }
       }
     }catch(e){
@@ -300,16 +299,51 @@ app.post('/updateattribute', function(req, res){
 });
 
 //update title/desc
-app.post('/updatetd', function(req, res){
-  const reqData = req.body;
-  console.log(JSON.stringify(reqData));
+app.post('/updatetd', async function(req, res){
+  const reqData = req.body.update;
+  console.log(req.body.loginData);
+  const loginData = req.body.loginData;
   let flag =svgParse.setTDFile(reqData.filename, JSON.stringify(reqData));
 
-  if(flag){
-    res.send(JSON.stringify({success: "SVG changed successfully."}));
-  }else{
-    res.send(JSON.stringify({error: 'Could not validate SVG.'}));
+  if(!flag){
+    return res.status(400).send(JSON.stringify({error: 'Could not validate SVG.'}));
   }
+
+  //db connection 
+  let error = null;
+  let connection;
+  try{
+    connection = await mysql.createConnection({
+        host     : loginData.host,
+        user     : loginData.user,
+        password : loginData.password,
+        database : loginData.database
+    });
+    const [rows, fields] = await connection.execute(`SELECT svg_id FROM FILE WHERE FILE.file_name='${reqData.filename}'`);
+    const filename = reqData.filename.replace("uploads/", "");
+    console.log(filename);
+    if(rows.length === 0){
+      const data = parsedata_FILE(filename);
+      if(data.success){
+        const file= data.success;
+        await connection.execute(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
+                                  VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${new Date().toLocaleString()}, ${file.size})`)
+      }else{
+        throw data.error;
+      }
+    }
+    let changesum = reqData.title?("TITLE: " + reqData.title):"" + reqData.desc?("DESC: " + reqData.desc): "";
+    console.log(changesum);
+ /*   await connection.execute(`INSERT INTO IMG_CHANGE(change_type, change_summary, change_time, svg_id)
+                                              VALUES('EDIT TITLE/DESC', '${changesum}', ${new Date().toLocaleString()}, ${rows[0].svg_id})`)
+  */ }catch(e){
+    error = e;
+    console.log(e);1
+  }finally{
+
+  }
+
+  res.send({success: "Updates changed successfully."});
 })
 
 function enumerate(str){
@@ -367,7 +401,7 @@ app.post('/create', async function(req,res){
         }
         const file = fileData.success;
         await connection.execute(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
-                                              VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${Date.now()}, ${file.size})`)
+                                              VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${new Date().toLocaleString()}, ${file.size})`)
 
       }catch(e){
         err = e;
@@ -458,13 +492,13 @@ app.post('/addshape/:file', async function(req, res){
       if(data.success){
         const file= data.success;
         await connection.execute(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
-                                  VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${Date.now()}, ${file.size})`)
+                                  VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${new Date().toLocaleString()}, ${file.size})`)
       }else{
         throw data.error;
       }
     }else{
       await connection.execute(`INSERT INTO IMG_CHANGE(change_type, change_summary, change_time, svg_id)
-                                                VALUES('ADD SHAPE', '${desc}', ${Date.now()}, ${rows[0].svg_id})`);
+                                                VALUES('ADD SHAPE', '${desc}', ${new Date().toLocaleString()}, ${rows[0].svg_id})`);
     }
   }catch(e){
     error = e;

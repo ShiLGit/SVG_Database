@@ -363,8 +363,14 @@ $('#file-select-form').submit(function(e){
     });
     //edit svg title attr  form
     $('#td-form').submit((e)=>{
+
         e.preventDefault();
-        let arg = {title: $("#new-title").val(), desc: $('#new-desc').val(), filename: 'uploads/'+curFile};
+        let arg = {update: {title: $("#new-title").val(), desc: $('#new-desc').val(), filename: 'uploads/'+curFile}};
+        const loginData = getLoginData();
+        if(!loginData){
+            alert("Error: invalid database connection data. Log out and try again.");
+        }
+        arg.loginData = loginData;
         console.log(arg);
 
         $.ajax({
@@ -390,6 +396,8 @@ $('#file-select-form').submit(function(e){
             }
         });
     });
+
+
     document.getElementById("svg-ele").onchange = (e)=>{
         const data = document.getElementById("svg-ele").value;
         if(document.getElementById("svg-ele").value === "placeholder"){
