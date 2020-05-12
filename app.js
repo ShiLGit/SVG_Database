@@ -54,6 +54,11 @@ function parsedata_FILE(fname){
   console.log('fdata: ', fileData);
   return {success: fileData};
 }
+function formatted_Date(){
+  const curDate = new Date();
+  return curDate.getDay() + "/" + curDate.getMonth()+1 + "/" + curDate.getFullYear();
+}
+
 //see if db connection is valid
 app.post('/db', async function(req, res, next){
   const loginData = req.body;
@@ -80,6 +85,7 @@ app.post('/db', async function(req, res, next){
     }
   }
 });
+
 app.post('/insertdl/:file', async function(req, res, next){
   console.log("INSERTDL CALLED???");
 
@@ -100,12 +106,9 @@ app.post('/insertdl/:file', async function(req, res, next){
 
     //INSERT FILE INTO DB IF NONEXISTING
     const [rows, fields] = await connection.execute(`SELECT * FROM FILE WHERE FILE.file_name=+'${fname}'`);
-    console.log(rows);
 
     if(rows.length === 0){
-      console.log("inserting");
-
-      //parse file data....
+      //parse, insert FILE record if DNE 
       const data = parsedata_FILE(fname);
       if(data.success){
         const file= data.success;
@@ -116,12 +119,12 @@ app.post('/insertdl/:file', async function(req, res, next){
       }
     }
 
-
     //INSERT DOWNLOAD RECORD
-    
+    await connection.execute(`INSERT INTO DOWNLOAD(d_descr, svg_id) VALUES('${formatted_Date()}', ${rows[0].svg_id})`)   
+
   }catch(e){
     console.log(e);
-    res.send({success: "lol jk"});
+    res.send({error: e});
 
   }finally{
     if(connection && connection.end) connection.end();
