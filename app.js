@@ -366,10 +366,8 @@ app.post('/create', async function(req,res){
           throw fileData.error;
         }
         const file = fileData.success;
-        console.log(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
-        VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${Date.now()}, ${file.size})`);
         await connection.execute(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
-        VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${Date.now()}, ${file.size})`)
+                                              VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${Date.now()}, ${file.size})`)
 
       }catch(e){
         err = e;
@@ -380,6 +378,7 @@ app.post('/create', async function(req,res){
       }
 
 });
+
 app.post('/attributes', function(req, res)
 {
   const reqData = req.body;
@@ -389,18 +388,8 @@ app.post('/attributes', function(req, res)
   const json = `{"attr": ${str}}`
   console.log(json);
   res.send(json);
-  /*wat does this do (old code)
-  fs.stat('uploads/' + req.params.name, function(err, stat) {
-    if(err == null) {
-      //res.sendFile(path.join(__dirname+'/uploads/' + req.params.name));
-
-
-    } else {
-      console.log('Error in file downloading route: '+err);
-      res.send('');
-    }
-  });*/
 });
+
 app.post('/scalerect/:file', function(req,res){
   console.log('fnma:', req.params.file);
   console.log(req.body);
@@ -421,12 +410,13 @@ app.post('/scalecirc/:file', function(req,res){
     return res.send("Circs scaled successfully.");
   }
 });
-app.post('/addshape/:file', function(req, res){
+app.post('/addshape/:file', async function(req, res){
   const arg = req.body;
+
   if(!arg){
     return res.send('ERROR!');
   }
-
+  console.log(arg.loginData);
   if(arg.rect){
     console.log('adding r');
     let flag = svgParse.addRectToFile("uploads/" + req.params.file, JSON.stringify(arg));
@@ -448,6 +438,23 @@ app.post('/addshape/:file', function(req, res){
       return res.send("Circ saved successfully.");
     }
   }
+
+
+  try{
+    connection = await mysql.createConnection({
+      host     : loginData.host,
+      user     : loginData.user,
+      password : loginData.password,
+      database : loginData.database
+    });
+    const [rows, fields] = await connection.execute(`SELECT svg_id FROM FILE.file_name = ${req.params.file}`)
+
+  }catch(e){
+    console.log(e);
+  }finally{
+    if(connection && connection.end) connection.end();
+  }
+
   res.send(null);
 })
 

@@ -458,7 +458,11 @@ $('#file-select-form').submit(function(e){
     
     //edit shape form
     $('#shape-form').submit(function(e){
-        let arg = { rect: null, circ: null};
+        let arg = { rect: null, circ: null, loginData: getLoginData()};
+        if(!arg.loginData){
+            return alert("Error: invalid db connection data. Try logging in again.");
+        }
+        console.log(arg.loginData);
         if($('#Rect').is(':checked')){ 
             arg.rect = {x: $('#x').val(), y: $('#y').val(), w: $('#width').val(), h: $('#height').val(), numAttr: 0, units: $('#units-r').val()};
             
