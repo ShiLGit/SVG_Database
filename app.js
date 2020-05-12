@@ -58,6 +58,9 @@ function formatted_Date(){
   const curDate = new Date();
   return curDate.getDay() + "/" + curDate.getMonth()+1 + "/" + curDate.getFullYear();
 }
+function formatted_Datetime(){
+  return new Date().toISOString().slice(0, 19).replace('T', ' ');
+}
 
 //see if db connection is valid
 app.post('/db', async function(req, res, next){
@@ -113,7 +116,7 @@ app.post('/insertdl/:file', async function(req, res, next){
       if(data.success){
         const file= data.success;
         await connection.execute(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
-                                  VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${new Date().toLocaleString()}, ${file.size})`)
+                                  VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${formatted_Datetime()}, ${file.size})`)
       }else if (data.error){
         throw data.error;
       }
@@ -178,9 +181,8 @@ app.post('/saveall', async function(req, res, next){
         
         //entry of this filename DNE, insert
         if(rows.length ===0){
-          console.log('...saving file...')
           await connection.execute(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
-                              VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${new Date().toLocaleString()}, ${file.size})`);
+                              VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${formatted_Datetime()}, ${file.size})`);
           }
       }
     }catch(e){
@@ -319,24 +321,26 @@ app.post('/updatetd', async function(req, res){
         password : loginData.password,
         database : loginData.database
     });
-    const [rows, fields] = await connection.execute(`SELECT svg_id FROM FILE WHERE FILE.file_name='${reqData.filename}'`);
     const filename = reqData.filename.replace("uploads/", "");
     console.log(filename);
+
+    const [rows, fields] = await connection.execute(`SELECT svg_id FROM FILE WHERE FILE.file_name='${filename}'`);
+
     if(rows.length === 0){
       const data = parsedata_FILE(filename);
       if(data.success){
         const file= data.success;
         await connection.execute(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
-                                  VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${new Date().toLocaleString()}, ${file.size})`)
+                                  VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${formatted_Datetime()}, ${file.size})`)
       }else{
         throw data.error;
       }
     }
-    let changesum = reqData.title?("TITLE: " + reqData.title):"" + reqData.desc?("DESC: " + reqData.desc): "";
+    let changesum = (reqData.title?("TITLE: " + reqData.title +"\n"):"") + (reqData.desc?("DESC: " + reqData.desc): "");
     console.log(changesum);
- /*   await connection.execute(`INSERT INTO IMG_CHANGE(change_type, change_summary, change_time, svg_id)
-                                              VALUES('EDIT TITLE/DESC', '${changesum}', ${new Date().toLocaleString()}, ${rows[0].svg_id})`)
-  */ }catch(e){
+    await connection.execute(`INSERT INTO IMG_CHANGE(change_type, change_summary, change_time, svg_id)
+                                              VALUES('EDIT TITLE/DESC', '${changesum}', ${formatted_Datetime()}, ${rows[0].svg_id})`)
+   }catch(e){
     error = e;
     console.log(e);1
   }finally{
@@ -401,7 +405,7 @@ app.post('/create', async function(req,res){
         }
         const file = fileData.success;
         await connection.execute(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
-                                              VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${new Date().toLocaleString()}, ${file.size})`)
+                                              VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${formatted_Datetime()}, ${file.size})`)
 
       }catch(e){
         err = e;
@@ -492,13 +496,13 @@ app.post('/addshape/:file', async function(req, res){
       if(data.success){
         const file= data.success;
         await connection.execute(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
-                                  VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${new Date().toLocaleString()}, ${file.size})`)
+                                  VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${formatted_Datetime()}, ${file.size})`)
       }else{
         throw data.error;
       }
     }else{
       await connection.execute(`INSERT INTO IMG_CHANGE(change_type, change_summary, change_time, svg_id)
-                                                VALUES('ADD SHAPE', '${desc}', ${new Date().toLocaleString()}, ${rows[0].svg_id})`);
+                                                VALUES('ADD SHAPE', '${desc}', ${formatted_Datetime()}, ${rows[0].svg_id})`);
     }
   }catch(e){
     error = e;
