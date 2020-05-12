@@ -324,12 +324,12 @@ function enumerate(str){
   }
   return 0;
 }
-app.post('/create', function(req,res){
+app.post('/create', async function(req,res){
     const name = req.body.name;
-    console.log(req.body.loginData);
+    let err = null;
 
     //check if duplicate file name
-    fs.readdir(path.join(__dirname+'/uploads'), function (err, files) {
+    await fs.readdir(path.join(__dirname+'/uploads'), function (err, files) {
         //listing all files using forEach
         let dupe = false;
         files.forEach(function (file) {
@@ -340,14 +340,45 @@ app.post('/create', function(req,res){
 
         if(dupe){
           console.log("Error: duplicate file.")
-          return res.status(400).send({error: "File already exists"});
+          err = {error: "File already exists"};
         }
         let flag = svgParse.makeEmpty("uploads/" + name);
         if(!flag){
-            return res.send({error: "Could not make file."});
+            err = {error: "Could not make file."};
         }
-        return res.send({success: "Successfully created " + name +"."});
       });
+
+      if(err){
+        return res.status(400).send(err);
+      }
+
+      //make db connection, update FILE table 
+      const loginData = req.body.loginData;
+      try{
+        let connection = await mysql.createConnection({
+          host     : loginData.host,
+          user     : loginData.user,
+          password : loginData.password,
+          database : loginData.database
+        });
+        const fileData = parsedata_FILE(name);
+        if(fileData.error){
+          throw fileData.error;
+        }
+        const file = fileData.success;
+        console.log(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
+        VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${Date.now()}, ${file.size})`);
+        await connection.execute(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
+        VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, ${Date.now()}, ${file.size})`)
+
+      }catch(e){
+        err = e;
+        console.log(e);
+      }finally{
+        if(err) return res.status(400).send(err);
+        return res.send({success: "Successfully created " + name +"."});
+      }
+
 });
 app.post('/attributes', function(req, res)
 {

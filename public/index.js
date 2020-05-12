@@ -421,7 +421,7 @@ $('#file-select-form').submit(function(e){
             }
         })
     }
-    
+
     //create new svg form
     $('#create-form').submit(function(e){
         let data = {name: $('#new-fname').val()};
@@ -455,6 +455,7 @@ $('#file-select-form').submit(function(e){
             }
         });
     })
+    
     //edit shape form
     $('#shape-form').submit(function(e){
         let arg = { rect: null, circ: null};
