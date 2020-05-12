@@ -492,8 +492,7 @@ $('#file-select-form').submit(function(e){
                }
             },
             fail: (err)=>{
-                alert(err);
-                e.preventDefault();
+                alert(err.error);
             }
         })
     })

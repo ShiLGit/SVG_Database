@@ -410,11 +410,13 @@ app.post('/scalecirc/:file', function(req,res){
     return res.send("Circs scaled successfully.");
   }
 });
+
 app.post('/addshape/:file', async function(req, res){
   const arg = req.body;
+  let error = null;
   let desc = "";
   if(!arg){
-    return res.send('ERROR!');
+    return res.status(400).send({error: "Missing argument"});
   }
   console.log(arg.loginData);
 
@@ -423,7 +425,7 @@ app.post('/addshape/:file', async function(req, res){
     console.log(flag)
 
     if(flag == 0){
-      return res.send("ERROR: Could not validate file after adding component (rect)");
+      return res.status(400).send({error: "Could not validate file after adding component (rect)"});
     }else{
       desc += "Added rectangle: " + JSON.stringify(arg.rect); 
     }
@@ -433,7 +435,7 @@ app.post('/addshape/:file', async function(req, res){
     console.log(flag)
 
     if(flag == 0){
-      return res.send("ERROR: Could not validate file after adding component (circ)");
+      return res.status(400).send({error: "Could not validate file after adding component (circ)"});
     }else{
       desc += "\nAdded circle: " + JSON.stringify(arg.circ);
     }
@@ -465,14 +467,16 @@ app.post('/addshape/:file', async function(req, res){
                                                 VALUES('ADD SHAPE', '${desc}', ${Date.now()}, ${rows[0].svg_id})`);
     }
   }catch(e){
+    error = e;
     console.log(e);
   }finally{
     if(connection && connection.end) connection.end();
   }
-  return res.send("Rect saved successfully.");
-  return res.send("Circ saved successfully.");
 
-  res.send(null);
+  if(error){
+    return res.status(400).send({error});
+  }
+  res.send("Changes saved successfully.");
 })
 
 
