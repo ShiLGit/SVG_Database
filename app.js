@@ -343,15 +343,13 @@ app.post('/updatetd', async function(req, res){
     }
     //insert IMG_CHANGE record
     let changesum = (reqData.title?("TITLE: " + reqData.title +"\n"):"") + (reqData.desc?("DESC: " + reqData.desc): "");
-    console.log(`INSERT INTO IMG_CHANGE(change_type, change_summary, change_time, svg_id)
-                 VALUES('EDIT TITLE/DESC', '${changesum}', '${formatted_Datetime()}', ${rows[0].svg_id})`);
     await connection.execute(`INSERT INTO IMG_CHANGE(change_type, change_summary, change_time, svg_id)
                                               VALUES('EDIT TITLE/DESC', '${changesum}', '${formatted_Datetime()}', ${rows[0].svg_id})`)
    }catch(e){
     error = e;
     console.log(e);
   }finally{
-
+    if(connection && connection.end) connection.end();
   }
 
   res.send({success: "Updates changed successfully."});

@@ -31,6 +31,52 @@
         2. Log in to access the database 
         3. You now have access to SVG Image Viewer's full functionality!
     </h3>
+
+
+<!--DB LOGIN ACCORDION-->
+<div class="accordion md-accordion" id="dblogin" role="tablist" aria-multiselectable="true">
+
+    <!-- Accordion card -->
+    <div class="card">
+  
+      <!-- Card header -->
+      <div class="card-header" role="tab" id="heading-dblogin">
+        <a class="collapsed" data-toggle="collapse" data-parent="#dblogin" href="#dblogin-body"
+          aria-expanded="false" aria-controls="dblogin-body">
+          <h5 class="mb-0">
+            Database Login <i class="fas fa-angle-down rotate-icon"></i>
+          </h5>
+        </a>
+      </div>
+  
+      <!-- Card body -->
+<div id="dblogin-body" class="collapse" role="tabpanel" aria-labelledby="heading-dblogin"
+        data-parent="#dblogin">
+                <form id = dblogin-form>
+                    <h3>Database Login</h3>
+                    <label for = "dblogin-uname">Username</label>
+                    <input id = "dblogin-uname" type = "text"  placeholder="Username" class = "form-control" required/>
+            
+                    <label for = "dblogin-pw">Password</label>
+                    <input id = "dblogin-pw" type = "text"  placeholder="Password" class = "form-control" required/>
+            
+                    <label for = "dblogin-dbname">Database Name</label>
+                    <input id = "dblogin-dbname" type = "text"  placeholder="Database Name" class = "form-control" required/>
+            
+            
+                    <label for = "dblogin-hostname">Database Hostname</label>
+                    <input id = "dblogin-hostname" type = "text"  placeholder="Hostname" class = "form-control" required/>
+                    
+                    <input id = "dblogin-btn" type = "submit" style = "margin:10px" class = "btn btn-primary mb-2" value = "Login"/>
+                </form>    
+                <div id = "dblogout" style = "display:none" disabled>
+                    <h4>You are logged in.</h4>
+                    <button class="btn btn-primary mb-2" id = "logout">Logout</button>
+                </div>
+</div>
+<!--END OF DB LOGIN ACCORDIN--> 
+  
+
     <button class = "collapsible">File Log</button>
 
 <div class = "collapsible-content">
@@ -69,31 +115,6 @@
 <button type ="button" class = "collapsible">
     Database
 </button>
-<div class = "collapsible-content">
-    <button type = "button" class = "collapsible" id = "collapsible-login">Login</button>
-    <div class = "collapsible-content" id = "collapsible-content-login">
-        <form id = dblogin-form>
-            <h3>Database Login</h3>
-            <label for = "dblogin-uname">Username</label>
-            <input id = "dblogin-uname" type = "text"  placeholder="Username" class = "form-control" required/>
-    
-            <label for = "dblogin-pw">Password</label>
-            <input id = "dblogin-pw" type = "text"  placeholder="Password" class = "form-control" required/>
-    
-            <label for = "dblogin-dbname">Database Name</label>
-            <input id = "dblogin-dbname" type = "text"  placeholder="Database Name" class = "form-control" required/>
-    
-    
-            <label for = "dblogin-hostname">Database Hostname</label>
-            <input id = "dblogin-hostname" type = "text"  placeholder="Hostname" class = "form-control" required/>
-            
-            <input id = "dblogin-btn" type = "submit" style = "margin:10px" class = "btn btn-primary mb-2" value = "Login"/>
-        </form>    
-        <div id = "dblogout" style = "display:none" disabled>
-            <h4>You are logged in.</h4>
-            <button class="btn btn-primary mb-2" id = "logout">Logout</button>
-        </div>
-    </div>
 
 <!--START OF FVIEW-->
     <button class = "collapsible" id = "collapsible-fileview" disabled>File View</button>

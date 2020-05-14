@@ -336,8 +336,14 @@ $('#file-select-form').submit(function(e){
     $('#attr-form').submit((e)=>{
         e.preventDefault();
         let attr = {name: $('#new-attr-key').val(), value: $('#new-attr-value').val()};
+        const loginData = getLoginData();
+        if(!loginData){
+            return alert("Error: invalid database connection data. Log out and try again.");
+        }
+        
         let props2 = JSON.parse(props);
         props2.attr = attr;
+        props2.loginData = loginData;
         console.log('props2:', props2);
         $.ajax({
             type: 'POST',
@@ -407,7 +413,7 @@ $('#file-select-form').submit(function(e){
         }
         toggleAttrForm(true);
         const keypairs = data.split(";");
-        props = `{"type": "${keypairs[0].split("=")[1]}", "num": "${keypairs[1].split("=")[1]}", "filename": "${curFile}"}`;
+        cy= `{"type": "${keypairs[0].split("=")[1]}", "num": "${keypairs[1].split("=")[1]}", "filename": "${curFile}"}`;
         
         console.log(props);
         //get attribute for selected element
