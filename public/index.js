@@ -7,7 +7,11 @@ $(document).ready(function() {
     updateLog();
     toggleAddCirc(false);
     toggleAddRect(false);
-    $('#filelog-link').attr('disabled', true);
+
+    $('#dbfunctions').hide();
+    $('#filelog').hide();
+    $('#fileeditor').hide();
+    $('#dblogin-link').trigger('click');
     //get all files for file laaaaaaaaaaaaaaaaaawg; render on screen
     function updateLog(){
         console.log("updateLog() called");

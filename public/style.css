@@ -13,19 +13,7 @@ body {
     background-color: #FFFFFF;
 }
 
-a:link:hover {
-    -webkit-transition: all 0.3s ease;
-    -moz-transition: all 0.3s ease;
-    transition: all 0.3s ease;
-    text-decoration: underline;
-    cursor: pointer;
-    cursor: hand;
-}
 /*UR CUSTOM CSSSSSSSSSSSS*/
-a.disabled{
-    pointer-events: none;
-    cursor: default;
-}
 h2{
     margin-top: 15px;
 }
