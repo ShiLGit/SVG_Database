@@ -101,15 +101,18 @@ $('#file-select-form').submit(function(e){
                     alert("Error: database connection failed.\nLog: " + `'${arg.error.message}'`);
                 }else if (arg.success){
                     alert(arg.success);
-                    //"remove" login form
-                    $('#collapsible-content-login').css("display", "none");
-                    $('#collapsible-fileview').prop("disabled", false);
 
                     //$('form#dblogin-form :input[type=text]').each(function(){$(this).prop("disabled", true);})
                     $('#dblogin-form').css("display", "none");
 
                     //replace with logout
                     $('#dblogout').css("display", "block");
+                    $('#dblogin-link').trigger('click');
+
+                    //show other controls
+                    $('#dbfunctions').show();
+                    $('#filelog').show();
+                    $('#fileeditor').show();
                 }
             },
             fail: function(err){
@@ -120,6 +123,10 @@ $('#file-select-form').submit(function(e){
     })
     //'Logout' of database
     $('#logout').click(function(){
+        $('#dbfunctions').hide();
+        $('#filelog').hide();
+        $('#fileeditor').hide();
+        
         $('#dblogout').css("display", "none");
         $("#dblogin-form").css("display", "block");
         $('#collapsible-fileview').prop("disabled", true);
