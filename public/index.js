@@ -4,54 +4,10 @@ $(document).ready(function() {
     let curFile = ""; //file open in file viewer
     let props = {}; //properties of selected omponent
 
-    //COLLAPSIBLES >> SET BEHAVIOR
-    const collapsibles = document.getElementsByClassName("collapsible");
-
-    for(let i = 0; i < collapsibles.length; i++){
-        collapsibles[i].nextElementSibling.style.display = "none";
-        if(collapsibles[i].getAttribute('id') !== 'collapsible-login'){
-            collapsibles[i].addEventListener("click", ()=>{
-                collapsibles[i].classList.toggle("active");
-    
-                const content = collapsibles[i].nextElementSibling;
-                if(content.style.display === "none"){
-                    content.style.display ="block";
-                }else{
-                    content.style.display = "none";
-                }
-    
-                console.log(content.scrollHeight);
-                //animate scroll
-                if (content.style.maxHeight) {
-                    content.style.maxHeight = null;
-                } else {
-                    content.style.maxHeight =  content.scrollHeight + 100 + "px";
-                }
-            })
-    
-        }
-    }
-    document.getElementById("collapsible-login").onclick = function(e){   
-        const btn = document.getElementById("collapsible-login");
-        const content = btn.nextElementSibling;
-        if(content.style.display === "none"){
-            content.style.display ="block";
-        }else{
-            content.style.display = "none";
-        }
-
-        //animate scroll
-        if (content.style.maxHeight) {
-            content.style.maxHeight = 500;
-        } else {
-            content.style.maxHeight =  content.scrollHeight + "px";
-        }
-    }
-
     updateLog();
     toggleAddCirc(false);
     toggleAddRect(false);
-
+    $('#filelog-link').attr('disabled', true);
     //get all files for file laaaaaaaaaaaaaaaaaawg; render on screen
     function updateLog(){
         console.log("updateLog() called");

@@ -12,6 +12,7 @@ body {
     line-height: 1.75;
     background-color: #FFFFFF;
 }
+
 a:link:hover {
     -webkit-transition: all 0.3s ease;
     -moz-transition: all 0.3s ease;
@@ -21,32 +22,9 @@ a:link:hover {
     cursor: hand;
 }
 /*UR CUSTOM CSSSSSSSSSSSS*/
-.collapsible{
-    width: 100%;
-    background-color: cornflowerblue;
-    font-size: 24px;
-    font-weight: bold; 
-    transition: 0.2s ease-out;
-    padding: 10px;
-
-    border: none;
-    cursor:pointer;
-}
-.collapsible-secondary{
-    background-color: lavender;
-}
-.active, .collapsible:hover{
- background-color: bisque;
- transition: 0.2s ease-out;
-}
-.collapsible-content{
-    display:none;
-    padding: 20px;
-    color: red;
-    background-color: bisque;
-    transition: 0.4s ease-out;
-    /*overflow: hidden;*/
-   max-height: 0;
+a.disabled{
+    pointer-events: none;
+    cursor: default;
 }
 h2{
     margin-top: 15px;

@@ -26,9 +26,9 @@
     -->
     <h1>SVG Image Viewer</h1>
     <h3>This is a simple SVG database that allows you to create/view/edit SVG images.
-        Instructions are as follows:
-        1. Host a database with MySQL; initialize all the tables lmaoooo 
-        2. Log in to access the database 
+        Instructions are as follows:<br/><br/>
+        1. Host a MySQL database<br/> 
+        2. Log in to access the database<br/> 
         3. You now have access to SVG Image Viewer's full functionality!
     </h3>
 
@@ -89,9 +89,9 @@
   
       <!-- Card header -->
     <div class="card-header" role="tab" id="heading-filelog">
-        <a class="collapsed" data-toggle="collapse" data-parent="#filelog" href="#filelog-body"
+        <a id = "filelog-link" class="collapsed" data-toggle="collapse" data-parent="#filelog" href="#filelog-body"
           aria-expanded="false" aria-controls="filelog-body">
-          <h5 class="mb-0">
+          <h5   class="mb-0">
             File Log <i class="fas fa-angle-down rotate-icon"></i>
           </h5>
         </a>
@@ -149,58 +149,53 @@
     </div>
   </div>
    <!--END OF DB FUNCTIONS--> 
-   
 
+<!--FILEEDITOR START-->
+<div class="accordion md-accordion" id="fileeditor" role="tablist" aria-multiselectable="true">
 
+    <!-- Accordion card -->
+    <div class="card">
+  
+      <!-- Card header -->
+      <div class="card-header" role="tab" id="heading-fileeditor">
+        <a class="collapsed" data-toggle="collapse" data-parent="#fileeditor" href="#fileeditor-body"
+          aria-expanded="false" aria-controls="fileeditor-body">
+          <h5 class="mb-0">
+            File Editor <i class="fas fa-angle-down rotate-icon"></i>
+          </h5>
+        </a>
+      </div>
+  
+      <!-- Card body -->
+      <div id="fileeditor-body" class="collapse" role="tabpanel" aria-labelledby="heading-fileeditor"
+        data-parent="#fileeditor">
+        
+            <form id="uploadForm"
+                enctype="multipart/form-data"
+                action="/upload"
+                method="post">
+                <h5>Upload New</h5>
+                <input type="file" name="uploadFile" required />
+                <input type="submit" value="Upload SVG" name="submit">
+            </form>
+            <form id = 'create-form'>
+                <h5>Create SVG</h5>
+                <input id = "new-fname" type = "text" required/>
+                <input type = "submit" value = "Create SVG"/>
+            </form>
 
+            <form id = "file-select-form">
+                <label for="svg-name">Choose a file to view:</label>
+                <select id="svg-name" name="svg" required = true>
+                </select>
+                <input type="submit">
+            </form>
+                
 
-
-
-<!--COLLAPSIBLE #3-->
-<button type ="button" class = "collapsible">
-    Database
-</button>
-<div class = "collapsible-content">
-    <button type = "button" class = "collapsible" id = "collapsible-login">Login</button>
-    <div class = "collapsible-content" id = "collapsible-content-login">
-
-    </div>
-
-    <!--START OF FVIEW-->
-    <button class = "collapsible" id = "collapsible-fileview" disabled>File View</button>
-    <div class = "collapsible-content">
-        <button class = "collapsible">Upload/Create SVG</button>
-            <div id = "new-form-wrapper" class = "collapsible-content">
-                <form id="uploadForm"
-                    enctype="multipart/form-data"
-                    action="/upload"
-                    method="post">
-                    <h5>Upload New</h5>
-                    <input type="file" name="uploadFile" required />
-                    <input type="submit" value="Upload SVG" name="submit">
-                </form>
-                <form id = 'create-form'>
-                    <h5>Create SVG</h5>
-                    <input id = "new-fname" type = "text" required/>
-                    <input type = "submit" value = "Create SVG"/>
-                </form>
-            </div>
-
-
-    <form id = "file-select-form">
-        <label for="svg-name">Choose a file to view:</label>
-        <select id="svg-name" name="svg" required = true>
-        </select>
-        <input type="submit">
-    </form>
-
-
- <div class = "table-wrapper1">
-
+    <div class = "table-wrapper1">
         <img id = "file-view-img" src = "" alt = "image"/>
 
         <table id = "file-view">
-
         </table>
         <div id = "attrview-wrapper">
             <h3>Edit SVG</h3>
@@ -279,10 +274,20 @@
                 <input type = "submit" id = "submscalec" disabled/>
             </form>
         </div>
+ 
+
+      </div>
     </div>
 </div>
-<!--END OF FVIEW-->
-</div>
+<!--FILEEDITOR END-->
+   
+
+
+
+
+
+
+
 <script src="/index.js"></script>
 
 
