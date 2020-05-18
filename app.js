@@ -64,12 +64,12 @@ function formatted_Datetime(){
   return r;
 }
 
-//see if db connection is valid
+//see if db connection is valid; init tables if dne
 app.post('/db', async function(req, res, next){
   const loginData = req.body;
   let connection;
   let err = null;
-
+  let success = "Database connection successful.";
   try{
     connection = await mysql.createConnection({
       host     : loginData.host,
@@ -77,8 +77,29 @@ app.post('/db', async function(req, res, next){
       password : loginData.password,
       database : loginData.database
     });
-    
+  
+  //keeps track of existing tables
+  const existingTables = [];
+  //check if tables exist
+  const [rows, fields] = await connection.execute("SHOW TABLES");
+  for(let i = 0; i < rows.length; i++){
+    let obj = rows[i];
+    console.log(i,obj, obj[(Object.keys(obj)[0])]);
+    existingTables.push(obj[(Object.keys(obj)[0])]);
+  }
+  console.log('existing tables', existingTables);
+  //init tables
+  if(!existingTables.includes('FILE') || !existingTables.includes('IMG_CHANGE') || !existingTables.includes('DOWNLOADS')){
+    if(existingTables.includes('FILE'))
+      await connection.execute("DROP TABLE FILE");
+    if(existingTables.includes('IMG_CHANGE'))
+      await connection.eecute("DROP TABLE IMG_CHANGE");
+    if(existingTables.includes)
+    await connection.execute("CREATE TABLE FILE(svg_id INT NOT NULL AUTO_INCREMENT, file_name VARCHAR(60) NOT NULL, file_title VARCHAR(256), file_description VARCHAR(256), n_rect INT NOT NULL, n_circ INT NOT NULL, n_group INT NOT NULL, creation_time DATETIME NOT NULL, file_size INT NOT NULL, PRIMARY KEY(svg_id))");
+  }
+
   }catch(e){
+    console.log(e);
     err = e;
   }finally{
     if (connection && connection.end) connection.end();
@@ -86,7 +107,7 @@ app.post('/db', async function(req, res, next){
     if(err){
       res.send({error: err});
     }else{
-      res.send({success: "Database connection successful."});
+      res.send({success});
     }
   }
 });
