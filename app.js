@@ -333,17 +333,51 @@ app.get('/uploads/:name', function(req , res)
 
 app.post('/updateattribute', async function(req, res){
   const reqData = req.body;
-  console.log("rdata..???", reqData);
-  console.log(JSON.stringify(reqData.attr));
   let flag = svgParse.setAttrFile('uploads/'+reqData.filename, JSON.stringify(reqData.attr), enumerate(reqData.type), reqData.num-1);
-  console.log(flag, req.body);
 
   if(flag == -1){
     res.send(JSON.stringify({error: "Invalid attribute. Change was not saved."}));
   }else if( flag == 0){
     res.send(JSON.stringify({error: reqData.filename + " could not validate against svg.xsd."}));
-  }else{
-    res.send(JSON.stringify({success: "SVG changed successfully."}));
+  }
+
+  //db attempt 
+  let error = null;
+  let connection = null;
+  const loginData = reqData.loginData;
+  try{
+    connection = await mysql.createConnection({
+      host     : loginData.host,
+      user     : loginData.user,
+      password : loginData.password,
+      database : loginData.database
+    });
+    //INSERT FILE INTO DB IF NONEXISTING
+    const [rows, fields] = await connection.execute(`SELECT * FROM FILE WHERE FILE.file_name='${reqData.filename}'`);
+    
+    //parse, insert FILE record if DNE 
+    if(rows.length === 0){
+      const data = parsedata_FILE(reqData.filename);
+      if(data.success){
+        const file= data.success;
+        await connection.execute(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
+                                  VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, '${formatted_Datetime()}', ${file.size})`)
+      }else if (data.error){
+        throw data.error;
+      }
+    }
+    
+    await connection.execute(`INSERT INTO IMG_CHANGE(change_type, change_summary, change_time, svg_id)
+                                                                     VALUES('UPDATE ATTR', '${JSON.stringify(reqData.attr)}', ${formatted_Datetime()}, ${rows[0].svg_id})`);
+  }catch(e){
+    console.log(e)
+    error = e;
+  }finally{
+    if(connection && connection.end) connection.end();
+    if(error)
+      return res.status(400).send({error});
+
+    res.send({success: "SVG Update successfully."});
   }
 });
 
