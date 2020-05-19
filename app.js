@@ -90,12 +90,37 @@ app.post('/db', async function(req, res, next){
   console.log('existing tables', existingTables);
   //init tables
   if(!existingTables.includes('FILE') || !existingTables.includes('IMG_CHANGE') || !existingTables.includes('DOWNLOADS')){
+    //drop all tables if they exist
     if(existingTables.includes('FILE'))
       await connection.execute("DROP TABLE FILE");
     if(existingTables.includes('IMG_CHANGE'))
-      await connection.eecute("DROP TABLE IMG_CHANGE");
-    if(existingTables.includes)
-    await connection.execute("CREATE TABLE FILE(svg_id INT NOT NULL AUTO_INCREMENT, file_name VARCHAR(60) NOT NULL, file_title VARCHAR(256), file_description VARCHAR(256), n_rect INT NOT NULL, n_circ INT NOT NULL, n_group INT NOT NULL, creation_time DATETIME NOT NULL, file_size INT NOT NULL, PRIMARY KEY(svg_id))");
+      await connection.execute("DROP TABLE IMG_CHANGE");
+    if(existingTables.includes('DOWNLOAD'))
+      await connection.execute("DROP TABLE DOWNLOAD");  
+    
+    //init all tables
+    await connection.execute(`CREATE TABLE FILE(svg_id INT NOT NULL AUTO_INCREMENT, 
+                                                file_name VARCHAR(60) NOT NULL, 
+                                                file_title VARCHAR(256), 
+                                                file_description VARCHAR(256), 
+                                                n_rect INT NOT NULL, 
+                                                n_circ INT NOT NULL, 
+                                                n_group INT NOT NULL, 
+                                                creation_time DATETIME NOT NULL, 
+                                                file_size INT NOT NULL, 
+                                                PRIMARY KEY(svg_id))`);
+    await connection.execute(`CREATE TABLE IMG_CHANGE(change_id INT AUTO_INCREMENT,
+                                                      change_type VARCHAR(256) NOT NULL,
+                                                      change_summary VARCHAR(256) NOT NULL,
+                                                      change_time DATETIME NOT NULL,
+                                                      svg_id INT NOT NULL,
+                                                      FOREIGN KEY(svg_id) REFERENCES FILE(svg_id) ON DELETE CASCADE,
+                                                      PRIMARY KEY(change_id))`);
+    await connection.execute(`CREATE TABLE DOWNLOAD(download_id INT AUTO_INCREMENT,
+                                                    d_descr VARCHAR(256),
+                                                    svg_id INT NOT NULL,
+                                                    FOREIGN KEY(svg_id) REFERENCES FILE(svg_id) ON DELETE CASCADE,
+                                                    PRIMARY KEY(download_id))`);
   }
 
   }catch(e){
