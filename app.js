@@ -107,6 +107,7 @@ app.post('/db', async function(req, res, next){
                                                 n_rect INT NOT NULL, 
                                                 n_circ INT NOT NULL, 
                                                 n_group INT NOT NULL, 
+                                                n_path INT NOT NULL,
                                                 creation_time DATETIME NOT NULL, 
                                                 file_size INT NOT NULL, 
                                                 PRIMARY KEY(svg_id))`);
@@ -334,7 +335,7 @@ app.get('/uploads/:name', function(req , res)
 app.post('/updateattribute', async function(req, res){
   const reqData = req.body;
   let flag = svgParse.setAttrFile('uploads/'+reqData.filename, JSON.stringify(reqData.attr), enumerate(reqData.type), reqData.num-1);
-
+  console.log(reqData);
   if(flag == -1){
     res.send(JSON.stringify({error: "Invalid attribute. Change was not saved."}));
   }else if( flag == 0){
@@ -362,23 +363,33 @@ app.post('/updateattribute', async function(req, res){
         const file= data.success;
         await connection.execute(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
                                   VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, '${formatted_Datetime()}', ${file.size})`)
+      
+       console.log(`SELECT * FROM FILE WHERE FILE.file_name='${reqData.filename}'`);
+       const [rows2, fields2] = await connection.execute(`SELECT * FROM FILE WHERE FILE.file_name='${reqData.filename}'`);
+       console.log(`INSERT INTO IMG_CHANGE(change_type, change_summary, change_time, svg_id)
+       VALUES('UPDATE ATTR', '${JSON.stringify(reqData.attr)}', '${formatted_Datetime()}', ${rows2[0].svg_id})`)
+       await connection.execute(`INSERT INTO IMG_CHANGE(change_type, change_summary, change_time, svg_id)
+                                             VALUES('UPDATE ATTR', '${JSON.stringify(reqData.attr)}', '${formatted_Datetime()}', ${rows2[0].svg_id})`);
+
       }else if (data.error){
         throw data.error;
       }
+    }else{
+      await connection.execute(`INSERT INTO IMG_CHANGE(change_type, change_summary, change_time, svg_id)
+      VALUES('UPDATE ATTR OF', '${JSON.stringify(reqData.attr)}', '${formatted_Datetime()}', ${rows[0].svg_id})`);
     }
     
-    await connection.execute(`INSERT INTO IMG_CHANGE(change_type, change_summary, change_time, svg_id)
-                                                                     VALUES('UPDATE ATTR', '${JSON.stringify(reqData.attr)}', ${formatted_Datetime()}, ${rows[0].svg_id})`);
   }catch(e){
     console.log(e)
     error = e;
   }finally{
     if(connection && connection.end) connection.end();
-    if(error)
+  }
+  if(error)
       return res.status(400).send({error});
 
     res.send({success: "SVG Update successfully."});
-  }
+
 });
 
 //update title/desc
