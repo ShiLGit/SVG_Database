@@ -89,16 +89,17 @@ app.post('/db', async function(req, res, next){
   }
   console.log('existing tables', existingTables);
   //init tables
-  if(!existingTables.includes('FILE') || !existingTables.includes('IMG_CHANGE') || !existingTables.includes('DOWNLOADS')){
+  if(!existingTables.includes('FILE') || !existingTables.includes('IMG_CHANGE') || !existingTables.includes('DOWNLOAD')){
+    console.log(!existingTables.includes('FILE'),!existingTables.includes('IMG_CHANGE'), !existingTables.includes('DOWNLOAD'));
     //drop all tables if they exist
-    if(existingTables.includes('FILE'))
-      await connection.execute("DROP TABLE FILE");
     if(existingTables.includes('IMG_CHANGE'))
       await connection.execute("DROP TABLE IMG_CHANGE");
     if(existingTables.includes('DOWNLOAD'))
       await connection.execute("DROP TABLE DOWNLOAD");  
+    if(existingTables.includes('FILE'))
+      await connection.execute("DROP TABLE FILE");   
     
-    //init all tables
+      //init all tables
     await connection.execute(`CREATE TABLE FILE(svg_id INT NOT NULL AUTO_INCREMENT, 
                                                 file_name VARCHAR(60) NOT NULL, 
                                                 file_title VARCHAR(256), 
@@ -121,6 +122,7 @@ app.post('/db', async function(req, res, next){
                                                     svg_id INT NOT NULL,
                                                     FOREIGN KEY(svg_id) REFERENCES FILE(svg_id) ON DELETE CASCADE,
                                                     PRIMARY KEY(download_id))`);
+    success += "\nNOTE: all database tables have been re-initialized because one or more were missing.";
   }
 
   }catch(e){
@@ -138,7 +140,6 @@ app.post('/db', async function(req, res, next){
 });
 
 app.post('/insertdl/:file', async function(req, res, next){
-  console.log("INSERTDL CALLED???");
 
   const connectionData = req.body;
   console.log(connectionData);
@@ -310,10 +311,7 @@ app.post('/upload', function(req, res) {
   let uploadFile = req.files.uploadFile;
   console.log(uploadFile);
   if(uploadFile.mimetype !== 'image/svg+xml'){
-   // res.send(JSON.stringify({error: "File is not a valid SVG."}));
     return;
-  }else{
-  //  res.send(JSON.stringify({success: "CONGRATULATIONS!!!!! YOU SENT AN SVG!!!!!"}));
   }
 
   // Use the mv() method to place the file somewhere on your server
@@ -333,8 +331,9 @@ app.get('/uploads/:name', function(req , res)
   res.send(JSON.parse(json));
 });
 
-app.post('/updateattribute', function(req, res){
+app.post('/updateattribute', async function(req, res){
   const reqData = req.body;
+  console.log("rdata..???", reqData);
   console.log(JSON.stringify(reqData.attr));
   let flag = svgParse.setAttrFile('uploads/'+reqData.filename, JSON.stringify(reqData.attr), enumerate(reqData.type), reqData.num-1);
   console.log(flag, req.body);
@@ -471,6 +470,7 @@ app.post('/create', async function(req,res){
 app.post('/attributes', function(req, res)
 {
   const reqData = req.body;
+  console.log(reqData);
   let str = "[]";
   str = svgParse.getAttribute("uploads/" + reqData.filename, enumerate(reqData.type), reqData.num-1);
 
