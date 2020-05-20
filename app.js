@@ -585,7 +585,8 @@ app.post('/addshape/:file', async function(req, res){
       database : loginData.database
     });
     const [rows, fields] = await connection.execute(`SELECT svg_id FROM FILE WHERE FILE.file_name = '${req.params.file}'`)
-
+    
+    let svg_id = -1;
     //parse, insert FILE record if DNE 
     if(rows.length === 0){
       const data = parsedata_FILE(req.params.file);
@@ -593,13 +594,23 @@ app.post('/addshape/:file', async function(req, res){
         const file= data.success;
         await connection.execute(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
                                   VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, '${formatted_Datetime()}', ${file.size})`)
+        const [rows2, fields2] = await connection.execute(`SELECT svg_id FROM FILE WHERE FILE.file_name = '${req.params.file}'`);
+        await connection.execute(`INSERT INTO IMG_CHANGE(change_type, change_summary, change_time, svg_id)
+                                                VALUES('ADD SHAPE', '${desc}', '${formatted_Datetime()}', ${rows2[0].svg_id})`);
+        svg_id = rows2[0].svg_id;
       }else{
         throw data.error;
       }
     }else{
+      svg_id = rows[0].svg_id;
       await connection.execute(`INSERT INTO IMG_CHANGE(change_type, change_summary, change_time, svg_id)
                                                 VALUES('ADD SHAPE', '${desc}', '${formatted_Datetime()}', ${rows[0].svg_id})`);
     }
+    if(arg.rect)
+      await connection.execute(`UPDATE FILE SET n_rect=FILE.n_rect + 1 WHERE FILE.svg_id=${svg_id}`);
+    if(arg.circ)
+      await connection.execute(`UPDATE FILE SET n_circ=FILE.n_circ + 1 WHERE FILE.svg_id=${svg_id}`);
+
   }catch(e){
     error = e;
     console.log(e);

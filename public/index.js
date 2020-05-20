@@ -318,7 +318,6 @@ $('#file-select-form').submit(function(e){
 
             success: function(data){
                 const res = JSON.parse(data);
-                console.log('data..',data);
                 if(res.error){
                     alert("Error: " +res.error);
                 }else{
