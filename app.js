@@ -574,10 +574,10 @@ app.post('/scalerect/:file', async function(req,res){
 
   res.send('Rects scaled successfully.');
 });
-app.post('/scalecirc/:file', function(req,res){
+app.post('/scalecirc/:file', async function(req,res){
   const reqData = req.body;
   console.log(req.body);
-  let flag = svgParse.scaleRect('uploads/'+req.params.file, reqData.factor);
+  let flag = svgParse.scaleCirc('uploads/'+req.params.file, reqData.factor);
   if(!flag){
     return res.send("ERROR: Unable to scale circles.");
   }
