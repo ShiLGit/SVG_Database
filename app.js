@@ -524,25 +524,105 @@ app.post('/attributes', function(req, res)
   res.send(json);
 });
 
-app.post('/scalerect/:file', function(req,res){
-  console.log('fnma:', req.params.file);
+app.post('/scalerect/:file', async function(req,res){
+  const reqData = req.body;
   console.log(req.body);
-  let flag = svgParse.scaleRect('uploads/'+req.params.file, req.body.factor);
+  let flag = svgParse.scaleRect('uploads/'+req.params.file, reqData.factor);
   if(!flag){
     return res.send("ERROR: Unable to scale rectangles.");
-  }else{
-    return res.send("Rects scaled successfully.");
   }
+
+  //db connection 
+  let err = null;
+  let connection = null;
+  try{
+    let loginData = reqData.loginData;
+    connection = await mysql.createConnection({
+      host     : loginData.host,
+      user     : loginData.user,
+      password : loginData.password,
+      database : loginData.database
+    });
+    const [rows, fields] = await connection.execute(`SELECT * FROM FILE WHERE FILE.file_name = '${req.params.file}'`)
+    let svg_id = -1;
+    if(rows.length === 0){
+      const data = parsedata_FILE(req.params.file);
+      if(data.success){
+        const file= data.success;
+        await connection.execute(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
+                                  VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, '${formatted_Datetime()}', ${file.size})`)
+        const [rows2, fields2] = await connection.execute(`SELECT svg_id FROM FILE WHERE FILE.file_name = '${req.params.file}'`);
+        await connection.execute(`INSERT INTO IMG_CHANGE(change_type, change_summary, change_time, svg_id)
+                                                VALUES('ADD SHAPE', '${desc}', '${formatted_Datetime()}', ${rows2[0].svg_id})`);
+        svg_id = rows2[0].svg_id;
+      }else{
+        throw data.error;
+      }
+    }else{
+      svg_id = rows[0].svg_id;
+    }
+    await connection.execute(`INSERT INTO IMG_CHANGE(change_type, change_summary, change_time, svg_id) 
+                                              VALUES('SCALE RECT', 'FILENAME: ${req.params.file}, FACTOR: ${reqData.factor}', '${formatted_Datetime()}', ${svg_id})`);
+  }catch(e){
+    console.log(e);
+    err = e;
+  }finally{
+    if(connection && connection.end) connection.end();
+  }
+  if(err)
+    return res.send('Error: ' + e);
+
+  res.send('Rects scaled successfully.');
 });
 app.post('/scalecirc/:file', function(req,res){
-  console.log('fnma:', req.params.file);
+  const reqData = req.body;
   console.log(req.body);
-  let flag = svgParse.scaleCirc('uploads/'+req.params.file, req.body.factor);
+  let flag = svgParse.scaleRect('uploads/'+req.params.file, reqData.factor);
   if(!flag){
-    return res.send("ERROR: Unable to scale circs.");
-  }else{
-    return res.send("Circs scaled successfully.");
+    return res.send("ERROR: Unable to scale circles.");
   }
+
+  //db connection 
+  let err = null;
+  let connection = null;
+  try{
+    let loginData = reqData.loginData;
+    connection = await mysql.createConnection({
+      host     : loginData.host,
+      user     : loginData.user,
+      password : loginData.password,
+      database : loginData.database
+    });
+    const [rows, fields] = await connection.execute(`SELECT * FROM FILE WHERE FILE.file_name = '${req.params.file}'`)
+    let svg_id = -1;
+    if(rows.length === 0){
+      const data = parsedata_FILE(req.params.file);
+      if(data.success){
+        const file= data.success;
+        await connection.execute(`INSERT INTO FILE(file_name, file_title, file_description, n_rect, n_circ, n_path, n_group, creation_time, file_size)
+                                  VALUES('${file.name}', '${file.title}', '${file.desc}', ${file.numRect}, ${file.numCirc}, ${file.numPaths}, ${file.numGroups}, '${formatted_Datetime()}', ${file.size})`)
+        const [rows2, fields2] = await connection.execute(`SELECT svg_id FROM FILE WHERE FILE.file_name = '${req.params.file}'`);
+        await connection.execute(`INSERT INTO IMG_CHANGE(change_type, change_summary, change_time, svg_id)
+                                                VALUES('ADD SHAPE', '${desc}', '${formatted_Datetime()}', ${rows2[0].svg_id})`);
+        svg_id = rows2[0].svg_id;
+      }else{
+        throw data.error;
+      }
+    }else{
+      svg_id = rows[0].svg_id;
+    }
+    await connection.execute(`INSERT INTO IMG_CHANGE(change_type, change_summary, change_time, svg_id) 
+                                              VALUES('SCALE CIRC', 'FILENAME: ${req.params.file}, FACTOR: ${reqData.factor}', '${formatted_Datetime()}', ${svg_id})`);
+  }catch(e){
+    console.log(e);
+    err = e;
+  }finally{
+    if(connection && connection.end) connection.end();
+  }
+  if(err)
+    return res.send('Error: ' + e);
+
+  res.send('Circles scaled successfully.');
 });
 
 app.post('/addshape/:file', async function(req, res){

@@ -262,12 +262,13 @@ $('#file-select-form').submit(function(e){
         document.getElementById('new-desc').value =data.desc;
     }
     $('#scale-rect-form').submit(e=>{
+        e.preventDefault();
         let val = $('#scale-rect').val();
         if(isNaN(val) || val <= 0){
             e.preventDefault();
             return alert("Error: invalid scale factor.");
         }
-        let arg = {factor: val};
+        let arg = {factor: val, loginData: getLoginData()};
         console.log(curFile)
         
         $.ajax({
@@ -281,13 +282,13 @@ $('#file-select-form').submit(function(e){
         })
     })
     $('#scale-circ-form').submit(e=>{
-
+        e.preventDefault();
         let val = $('#scale-circ').val();
         if(isNaN(val) || val <= 0){
             e.preventDefault();
             return alert("Error: invalid scale factor.");
         }
-        let arg = {factor: val};
+        let arg = {factor: val, loginData: getLoginData()};
         console.log(curFile)
         $.ajax({
             type: 'POST',
