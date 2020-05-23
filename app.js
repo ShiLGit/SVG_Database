@@ -703,7 +703,54 @@ app.post('/addshape/:file', async function(req, res){
   }
   res.send("Changes saved successfully.");
 })
+app.post('/cleardata', async function(req, res){
+  console.log(req.body);
+  let loginData = req.body;
+  let connection;
+  let err = null;
+  try{
+    connection = await mysql.createConnection({
+      host     : loginData.host,
+      user     : loginData.user,
+      password : loginData.password,
+      database : loginData.database
+    });
+    await connection.execute(`TRUNCATE IMG_CHANGE`);
+    await connection.execute(`ALTER TABLE IMG_CHANGE AUTO_INCREMENT=1`);
 
+    await connection.execute(`TRUNCATE DOWNLOAD`);
+    await connection.execute(`ALTER TABLE DOWNLOAD AUTO_INCREMENT=1`);
+  
+    await connection.execute(`DELETE FROM FILE`);
+    await connection.execute(`ALTER TABLE FILE AUTO_INCREMENT=1`);
+  }catch(e){
+    console.log(e);
+    err = e;
+  }finally{
+    if(connection && connection.end) connection.end();
+  }
+  if(err)
+    return res.status(400).send({error: err});
 
+  res.send({success: "All table data successfully deleted."});
+})
+app.post('/query/all', async function(req, res){
+  let loginData = req.body.loginData;
+  let connection;
+  try{
+    connection = await mysql.createConnection({
+      host     : loginData.host,
+      user     : loginData.user,
+      password : loginData.password,
+      database : loginData.database
+    });
+    const [rows, fields] = await connection.execute('SELECT * FROM FILE');
+  }catch(e){
+    console.log(e);
+  }finally{
+    if(connection && connection.end) connection.end();
+  }
+  res.send('lol');
+})
 app.listen(portNum);
 console.log('Running app at localhost: ' + portNum);

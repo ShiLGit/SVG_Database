@@ -434,7 +434,22 @@ $('#file-select-form').submit(function(e){
             }
         });
     })
-    
+    //clear DB data 
+    $('#cleardata').click(function(e){
+        $.ajax({
+            type: 'POST',
+            contentType: 'application/json',
+            url: '/cleardata',
+            data: JSON.stringify(getLoginData()),
+            success: function(data){
+                console.log(data);
+                if(data.success){
+                    alert(data.success);
+                }
+            }
+            
+        })
+    })    
     //edit shape form
     $('#shape-form').submit(function(e){
         e.preventDefault();
@@ -558,4 +573,5 @@ $('#file-select-form').submit(function(e){
         }
         return loginData;
     }
+    //function buildTable()
 });
