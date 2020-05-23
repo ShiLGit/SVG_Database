@@ -464,6 +464,20 @@ $('#file-select-form').submit(function(e){
             }
             
         })
+    })
+    //execute query
+    $('#execute-query').click(function(e){
+        const url = $('#qtype').val();
+        $.ajax({
+            type: 'POST',
+            url: '/query/' + url,
+            contentType: 'application/json',
+            data: JSON.stringify(getLoginData()),
+            success: function(data){
+                alert("success");
+                buildQueryTable(data.allFiles);
+            }
+        })
     })    
     //edit shape form
     $('#shape-form').submit(function(e){
@@ -506,6 +520,19 @@ $('#file-select-form').submit(function(e){
         })
     })
     //HELPERS --------------------------------------------------------------------------------------
+    /*Build table based on query data >> array of all file records, represented as objects */
+    function buildQueryTable(data){
+        if(!data || data.length == 0)
+            return;
+        
+        $('#query-table').empty();
+        
+        const fields = Object.keys(data[0]);
+        let innerTH = "";
+        fields.forEach((field)=> innerTH +=`<th>${field}</th>`);
+        $('#query-table').append(innerTH)
+
+    }
     function makeFViewEntry(ele){
         let entry = 
         `<tr>

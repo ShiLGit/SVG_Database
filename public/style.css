@@ -14,6 +14,9 @@ body {
 }
 
 /*UR CUSTOM CSSSSSSSSSSSS*/
+#query-table{
+    width: 100%;
+}
 #qtype{
     margin:auto;
 }

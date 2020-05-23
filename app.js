@@ -736,7 +736,7 @@ app.post('/cleardata', async function(req, res){
 });
 
 app.post('/query/allfiles', async function(req, res){
-  let loginData = req.body.loginData;
+  let loginData = req.body;
   let connection;
   let err = null;
   let allFiles = null;
