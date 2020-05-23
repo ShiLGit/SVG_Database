@@ -139,14 +139,25 @@
       <!-- Card body -->
       <div id="dbfunctions-body" class="collapse" role="tabpanel" aria-labelledby="heading-dbfunctions"
         data-parent="#dbfunctions">
-          
-          <form id = "executequery">
-              <input type = "submit" value = "Execute Query"/>
-          </form>
   
           <button id = "storefiles" class = "btn btn-primary btn-lg btn-block">Store all files</button>
           <button id = "cleardata" class = "btn btn-primary btn-lg btn-block">Clear all data</button>
           <button id = "dbstatus" class = "btn btn-primary btn-lg btn-block">Display database status</button>
+          <hr/>
+          <h2>Execute Query</h2>
+          <label for = "qtype">Query Type</label>
+          <select name = "qtype" id = "qtype">
+            <option value ="all">All Files</option>
+            <option value ="creation-date">Creation Date</option>
+            <option value ="modification-date">All Files</option>
+            <option value ="shape-count">Shape Count</option>
+            <option value ="most-downloaded">N Most Downloaded</option>
+            <option value ="changes">Changes (Filtered)</option>
+          </select>
+          <div id = "query-table">
+            
+          </div>
+
       </div>
     </div>
   </div>

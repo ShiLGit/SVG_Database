@@ -735,9 +735,11 @@ app.post('/cleardata', async function(req, res){
   res.send({success: "All table data successfully deleted."});
 });
 
-app.post('/query/all', async function(req, res){
+app.post('/query/allfiles', async function(req, res){
   let loginData = req.body.loginData;
   let connection;
+  let err = null;
+  let allFiles = null;
   try{
     connection = await mysql.createConnection({
       host     : loginData.host,
@@ -746,12 +748,17 @@ app.post('/query/all', async function(req, res){
       database : loginData.database
     });
     const [rows, fields] = await connection.execute('SELECT * FROM FILE');
+    allFiles = rows;
   }catch(e){
     console.log(e);
+    err = e;
   }finally{
     if(connection && connection.end) connection.end();
   }
-  res.send('lol');
+  if(err)
+    return res.status(400).send({error: err});
+  
+  res.send({allFiles});
 });
 app.post('/query/status', async function(req, res){
   let loginData = req.body;
