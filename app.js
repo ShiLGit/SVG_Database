@@ -733,7 +733,8 @@ app.post('/cleardata', async function(req, res){
     return res.status(400).send({error: err});
 
   res.send({success: "All table data successfully deleted."});
-})
+});
+
 app.post('/query/all', async function(req, res){
   let loginData = req.body.loginData;
   let connection;
@@ -751,6 +752,40 @@ app.post('/query/all', async function(req, res){
     if(connection && connection.end) connection.end();
   }
   res.send('lol');
-})
+});
+app.post('/query/status', async function(req, res){
+  let loginData = req.body;
+  let connection;
+  let err = null;
+  let str = "";
+  try{
+    connection = await mysql.createConnection({
+      host     : loginData.host,
+      user     : loginData.user,
+      password : loginData.password,
+      database : loginData.database
+    });
+    const [rowsf, fieldsf] = await connection.execute('SELECT COUNT(*) FROM FILE');
+    const numFiles = rowsf[0][(Object.keys(rowsf[0])[0])];
+
+    const [rowsc, fieldsc] = await connection.execute('SELECT COUNT(*) FROM IMG_CHANGE');
+    const numChanges = rowsc[0][(Object.keys(rowsc[0])[0])];
+
+    const [rowsd, fieldsd] = await connection.execute('SELECT COUNT(*) FROM DOWNLOAD');
+    const numDownloads = rowsd[0][(Object.keys(rowsd[0])[0])];
+  
+    str = `DATABASE STATUS\n• ${numFiles} files\n• ${numChanges} changes\n• ${numDownloads} downloads`
+  }catch(e){
+    err = e;
+    console.log(e);
+  }finally{
+    if(connection && connection.end) connection.end();
+  }
+  if(err)
+    return res.status(400).send({error:err});
+  res.send({success: str});
+});
+
+
 app.listen(portNum);
 console.log('Running app at localhost: ' + portNum);

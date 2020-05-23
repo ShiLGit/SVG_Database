@@ -434,6 +434,21 @@ $('#file-select-form').submit(function(e){
             }
         });
     })
+    //get DB status 
+    $('#dbstatus').click(function(e){
+        $.ajax({
+            type: 'POST',
+            contentType: 'application/json',
+            url: '/query/status',
+            data: JSON.stringify(getLoginData()),
+            success: function(data){
+                console.log(data);
+                if(data.success){
+                    alert(data.success);
+                }
+            }  
+        })
+    })
     //clear DB data 
     $('#cleardata').click(function(e){
         $.ajax({
