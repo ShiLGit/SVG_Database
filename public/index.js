@@ -527,11 +527,20 @@ $('#file-select-form').submit(function(e){
         
         $('#query-table').empty();
         
+        //make table heading
         const fields = Object.keys(data[0]);
         let innerTH = "";
         fields.forEach((field)=> innerTH +=`<th>${field}</th>`);
         $('#query-table').append(innerTH)
 
+        //populate table rows
+        data.forEach((recordObj)=>{
+            let innerTR = "";
+            for(let i = 0; i < fields.length; i++){
+                innerTR += `<td>${recordObj[fields[i]]}</td>`;
+            }
+            $('#query-table').append(`<tr>${innerTR}</tr>`);
+        })
     }
     function makeFViewEntry(ele){
         let entry = 
