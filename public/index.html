@@ -142,6 +142,7 @@
   
 
           <h4>Execute Query</h4>
+          <form id ="execute-query">
           <label for = "qtype">Query Type</label>
           <select name = "qtype" id = "qtype">
             <option value ="allfiles">All Files</option>
@@ -151,7 +152,12 @@
             <option value ="most-downloaded">N Most Downloaded</option>
             <option value ="changes">Changes (Filtered)</option>
           </select>
-          <button id = "execute-query">Execute Query</button>
+          <div id = 'queryoptions'>
+
+          </div>
+          <input type = 'submit' id = "execute-query-btn" value = 'Execute Query'/>
+
+        </form>
           <table id = "query-table">
           </table>
 
@@ -296,7 +302,32 @@
 </div>
 <!--FILEEDITOR END-->
    
-
+<!--Dynamic forms-->
+<script id ="qf-shape-count" type = 'text/html'>
+  <p>Number of Rectangles (Range)</p>
+                 <label for = "n_rect-low">Min: </label>
+                 <input id = "n_rect-low" placeholder = "No constraint" class ="queryfilter"/>
+                 <label for = "n_rect-high">Max:</label>
+                 <input id = "n_rect-high" placeholder = "No constraint" class ="queryfilter"/>
+                 <br/>
+                 <p>Number of Circles (Range)</p>
+                 <label for = "n_circ-low">Min:</label>
+                 <input id = "n_circ-low" placeholder = "No constraint" class ="queryfilter"/>
+                 <label for = "n_circ-high">Max:</label>
+                 <input id = "n_circ-high" placeholder = "No constraint" class ="queryfilter"/>
+                 <br/>
+                 <p>Number of Paths (Range)</p>
+                 <label for = "n_path-low">Min:</label>
+                 <input id = "n_path-low" placeholder = "No constraint" class ="queryfilter"/>
+                 <label for = "n_path-high">Max:</label>
+                 <input id = "n_path-high" placeholder = "No constraint" class ="queryfilter"/>
+                 <br/>
+                 <p>Number of Groups (Range)</p>
+                 <label for = "n_group-low">Min:</label>
+                 <input id = "n_group-low" placeholder = "No constraint" class ="queryfilter"/>
+                 <label for = "n_group-high">Max:</label>
+                 <input id = "n_group-high" placeholder = "No constraint" class ="queryfilter"/>
+</script>
 
 
 

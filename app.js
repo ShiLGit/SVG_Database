@@ -84,10 +84,8 @@ app.post('/db', async function(req, res, next){
   const [rows, fields] = await connection.execute("SHOW TABLES");
   for(let i = 0; i < rows.length; i++){
     let obj = rows[i];
-    console.log(i,obj, obj[(Object.keys(obj)[0])]);
     existingTables.push(obj[(Object.keys(obj)[0])]);
   }
-  console.log('existing tables', existingTables);
   //init tables
   if(!existingTables.includes('FILE') || !existingTables.includes('IMG_CHANGE') || !existingTables.includes('DOWNLOAD')){
     console.log(!existingTables.includes('FILE'),!existingTables.includes('IMG_CHANGE'), !existingTables.includes('DOWNLOAD'));
@@ -735,11 +733,13 @@ app.post('/cleardata', async function(req, res){
   res.send({success: "All table data successfully deleted."});
 });
 
-app.post('/query/allfiles', async function(req, res){
+app.post('/query/:type', async function(req, res){
   let loginData = req.body;
+  const qtype = req.params.type;
+
   let connection;
   let err = null;
-  let allFiles = null;
+  let allRecords = null;
   try{
     connection = await mysql.createConnection({
       host     : loginData.host,
@@ -747,8 +747,14 @@ app.post('/query/allfiles', async function(req, res){
       password : loginData.password,
       database : loginData.database
     });
-    const [rows, fields] = await connection.execute('SELECT * FROM FILE');
-    allFiles = rows;
+
+    let query;
+    if(qtype === 'allfiles')
+      query = 'SELECT * FROM FILE';
+    //else if (qtype === '')
+    
+    const [rows, fields] = await connection.execute(query);
+    allRecords = rows;
   }catch(e){
     console.log(e);
     err = e;
@@ -758,7 +764,7 @@ app.post('/query/allfiles', async function(req, res){
   if(err)
     return res.status(400).send({error: err});
   
-  res.send({allFiles});
+  res.send({allRecords});
 });
 app.post('/query/status', async function(req, res){
   let loginData = req.body;

@@ -465,9 +465,31 @@ $('#file-select-form').submit(function(e){
             
         })
     })
+    $('#qtype').change(function(e){
+        const qtype = $('#qtype').val();
+        let innerHTML = "";
+        switch(qtype){
+            case 'creation-date':
+                innerHTML = "<h4>TOO LAZY FOR THIS ONE</h4>";
+                break;
+            
+            case 'modification-date': 
+                innerHTML = "<h4>TOO LAZO FOR THIS ONE TOO</h4>";
+                break;
+            
+            case 'shape-count':
+                innerHTML = $('#qf-shape-count').html();                
+                 break;
+        
+        }
+        $('#queryoptions').html(innerHTML);
+
+    })
     //execute query
-    $('#execute-query').click(function(e){
+    $('#execute-query').submit(function(e){
+        e.preventDefault();
         const url = $('#qtype').val();
+        
         $.ajax({
             type: 'POST',
             url: '/query/' + url,
@@ -475,7 +497,7 @@ $('#file-select-form').submit(function(e){
             data: JSON.stringify(getLoginData()),
             success: function(data){
                 alert("success");
-                buildQueryTable(data.allFiles);
+                buildQueryTable(data.allRecords);
             }
         })
     })    
