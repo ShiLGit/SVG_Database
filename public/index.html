@@ -158,6 +158,7 @@
           <input type = 'submit' id = "execute-query-btn" value = 'Execute Query'/>
 
         </form>
+          <h5 id = "table-title"></h5>
           <table id = "query-table">
           </table>
 
@@ -327,6 +328,27 @@
                  <input id = "n_group-low" placeholder = "No constraint" class ="queryfilter"/>
                  <label for = "n_group-high">Max:</label>
                  <input id = "n_group-high" placeholder = "No constraint" class ="queryfilter"/>
+</script>
+<script id = "qf-change">
+  <label for = "qf-filename">File name: </label>
+  <input id ="qf-filename" type = "text" placeholder = "File name" required/>
+  <br/>
+
+  <label for = "qf-changetype">Change type: </label>
+  <select id = "qf-changetype">
+    <option value = "UPDATE ATTR">Update (General) Attribute</option>
+    <option value = "EDIT TITLE/DESC">Update Title/Desc</option>
+    <option value = "ADD SHAPE">Add shape</option>
+    <option value = "SCALE RECT">Scale rectangle</option>
+    <option value = "SCALE CIRC">Scale circle</option>
+  </select>
+  <br/>
+
+  <label for = "qf-changesort">Sort by: </label>
+  <select id = "qf-changesort">
+    <option value = "most-recent">Most Recent</option>
+    <option value = "oldest">Oldest</option>
+  </select>
 </script>
 
 

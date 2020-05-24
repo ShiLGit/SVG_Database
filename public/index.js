@@ -478,9 +478,25 @@ $('#file-select-form').submit(function(e){
                 break;
             
             case 'shape-count':
-                innerHTML = $('#qf-shape-count').html();                
+                innerHTML = `<hr/><p>Filter files by their shape count.</p><hr/>`+ $('#qf-shape-count').html();                
                  break;
-        
+
+            case 'most-downloaded':
+                innerHTML = `
+                <hr/><p>Display the N most frequently downloaded files.</p><hr/>
+                <label for = "most-downloaded-num">Display top </label> 
+                <input  id = "most-downloaded-num" type = "text" required style = "max-width:75px" placeholder = "(Number)"/>
+                <label for = "most-downloaded-num"> most downloaded files</label> 
+                `;
+                break;
+
+            case 'changes':
+                innerHTML = `<hr/><p>Display all changes to a specific file between specific dates.</p><hr/>` + $('#qf-change').html();
+                break;
+
+            case 'allfiles':
+                innerHTML = '<hr/><p>Display all files in the database.</p><hr/>'
+                break;
         }
         $('#queryoptions').html(innerHTML);
 
@@ -498,6 +514,7 @@ $('#file-select-form').submit(function(e){
             success: function(data){
                 alert("success");
                 buildQueryTable(data.allRecords);
+                $('#table-title').html(url);
             }
         })
     })    

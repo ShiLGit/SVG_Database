@@ -374,7 +374,7 @@ app.post('/updateattribute', async function(req, res){
       }
     }else{
       await connection.execute(`INSERT INTO IMG_CHANGE(change_type, change_summary, change_time, svg_id)
-      VALUES('UPDATE ATTR OF', '${JSON.stringify(reqData.attr)}', '${formatted_Datetime()}', ${rows[0].svg_id})`);
+      VALUES('UPDATE ATTR', '${JSON.stringify(reqData.attr)}', '${formatted_Datetime()}', ${rows[0].svg_id})`);
     }
     
   }catch(e){
