@@ -688,13 +688,17 @@ $('#file-select-form').submit(function(e){
         return {valid: true, error: null};
     }
     function validateQfCounts(){
-        if(!checkNumInputs($('#n_rect_low').val(), $('#n_rect_high').val()))
+        if(!checkNumInputs($('#n_rect-low').val(), $('#n_rect-high').val()))
             return {valid: false, error: 'Invalid rectangle input. (Positive integers, min <= max)'};
+        return {valid: true, error: null};
     }
     function checkNumInputs(n_low, n_high){
+        console.log(n_low, n_high);
+
         if(n_low === "" && n_high === "")
             return true;
-        if(Number.isInteger(n_low) && Number.isInteger(n_high) && n_low < n_high && n_low > 0){
+    
+        if(n_low == parseInt(n_low) && n_high ==parseInt(n_high) && n_low < n_high && n_low >= 0){
             return true;
         }
         return false;
