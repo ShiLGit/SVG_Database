@@ -147,7 +147,7 @@
           <select name = "qtype" id = "qtype">
             <option value ="allfiles">All Files</option>
             <option value ="creation-date">Creation Date</option>
-            <option value ="modification-date">All Files</option>
+            <option value ="modification-date">Modification Date</option>
             <option value ="shape-count">Shape Count</option>
             <option value ="most-downloaded">N Most Downloaded</option>
             <option value ="changes">Changes (Filtered)</option>
@@ -329,7 +329,15 @@
                  <label for = "n_group-high">Max:</label>
                  <input id = "n_group-high" placeholder = "No constraint" class ="queryfilter"/>
 </script>
-<script id = "qf-change">
+
+<script id = "qf-date">
+  <label for = "date-low">Starting from: </label>
+  <input id = "date-low" type = "date" required/>
+  <br/>
+  <label for = "date-high">Ending at: </label>
+  <input id = "date-high" type = "date" required/>
+</script>
+<script id = "qf-change" type = "text/html">
   <label for = "qf-filename">File name: </label>
   <input id ="qf-filename" type = "text" placeholder = "File name" required/>
   <br/>

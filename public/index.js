@@ -470,11 +470,11 @@ $('#file-select-form').submit(function(e){
         let innerHTML = "";
         switch(qtype){
             case 'creation-date':
-                innerHTML = "<h4>TOO LAZY FOR THIS ONE</h4>";
+                innerHTML = "<hr/><p>Display all files created within a date range.</p><hr/>" + $('#qf-date').html();
                 break;
             
             case 'modification-date': 
-                innerHTML = "<h4>TOO LAZO FOR THIS ONE TOO</h4>";
+                innerHTML = "<hr/><p>Display all files modified within a date range.</p><hr/>" + $('#qf-date').html();
                 break;
             
             case 'shape-count':
