@@ -679,7 +679,20 @@ $('#file-select-form').submit(function(e){
             
             case 'shape-count': 
                 return validateQfCounts();
-        }        
+
+            case 'most-downloaded':
+                const inpt = $('#most-downloaded-num').val();
+                if(inpt == parseInt(inpt) && inpt >0)
+                    return {valid: true, error: null};
+
+                return {valid: false, error: 'ERROR: input must be postive integer.'};
+            
+            case 'changes':
+                const filename = $('#qf-filename').val();
+                if(filename.substr(filename.length - 4) !== '.svg')
+                    return {valid: false, error: 'ERROR: Invalid filename. (Must have .svg extension)'};
+                return validQfDates();
+            }        
     }
     function validateQfDates(){
         if($('#date-high').val() < $('#date-low').val())
@@ -690,8 +703,17 @@ $('#file-select-form').submit(function(e){
     function validateQfCounts(){
         if(!checkNumInputs($('#n_rect-low').val(), $('#n_rect-high').val()))
             return {valid: false, error: 'Invalid rectangle input. (Positive integers, min <= max)'};
+        if(!checkNumInputs($('#n_circ-low').val(), $('#n_circ-high').val()))
+            return {valid: false, error: 'Invalid circle input. (Positive integers, min <= max)'};
+        if(!checkNumInputs($('#n_path-low').val(), $('#n_path-high').val()))
+            return {valid: false, error: 'Invalid path input. (Positive integers, min <= max)'};
+        if(!checkNumInputs($('#n_group-low').val(), $('#n_group-high').val()))
+            return {valid: false, error: 'Invalid group input. (Positive integers, min <= max)'};
+
+
         return {valid: true, error: null};
     }
+    //helper fx: return bool for if inputs are valid for num range
     function checkNumInputs(n_low, n_high){
         console.log(n_low, n_high);
 
