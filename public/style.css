@@ -14,6 +14,17 @@ body {
 }
 
 /*UR CUSTOM CSSSSSSSSSSSS*/
+.qf {
+    display: grid;
+    grid-template-columns: 40% 30%;
+    margin: 2% 10%;
+}
+.qf input{
+    grid-column-start: 2;
+}
+.qf label{
+    grid-column-start: 1;
+}
 .queryfilter{
     max-width: 150px;
 }

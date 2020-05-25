@@ -491,7 +491,7 @@ $('#file-select-form').submit(function(e){
                 break;
 
             case 'changes':
-                innerHTML = `<hr/><p>Display all changes to a specific file between specific dates.</p><hr/>` + $('#qf-change').html();
+                innerHTML = `<hr/><p>Display all changes to a specific file between specific dates.</p><hr/>` + $('#qf-change').html() + '<br/>'+ $('#qf-date').html();
                 break;
 
             case 'allfiles':
@@ -505,7 +505,7 @@ $('#file-select-form').submit(function(e){
     $('#execute-query').submit(function(e){
         e.preventDefault();
         const url = $('#qtype').val();
-        
+        console.log('vqf = ', validateQf());        
         $.ajax({
             type: 'POST',
             url: '/query/' + url,
@@ -663,5 +663,40 @@ $('#file-select-form').submit(function(e){
         }
         return loginData;
     }
-    //function buildTable()
+    //returns true if qf input is valid
+    function validateQf(){
+        const qtype = $('#qtype').val();
+        const toReturn = {valid: false, error: null};
+        switch(qtype){
+            case 'allfiles':
+                return {valid: true, error: null};
+
+            case 'creation-date':
+                return validateQfDates();
+
+            case 'modification-date':
+                return validateQfDates();
+            
+            case 'shape-count': 
+                return validateQfCounts();
+        }        
+    }
+    function validateQfDates(){
+        if($('#date-high').val() < $('#date-low').val())
+            return {valid: false, error: 'ERROR: Start date is later than end date.'};
+        
+        return {valid: true, error: null};
+    }
+    function validateQfCounts(){
+        if(!checkNumInputs($('#n_rect_low').val(), $('#n_rect_high').val()))
+            return {valid: false, error: 'Invalid rectangle input. (Positive integers, min <= max)'};
+    }
+    function checkNumInputs(n_low, n_high){
+        if(n_low === "" && n_high === "")
+            return true;
+        if(Number.isInteger(n_low) && Number.isInteger(n_high) && n_low < n_high && n_low > 0){
+            return true;
+        }
+        return false;
+    }
 });

@@ -330,13 +330,16 @@
                  <input id = "n_group-high" placeholder = "No constraint" class ="queryfilter"/>
 </script>
 
-<script id = "qf-date">
-  <label for = "date-low">Starting from: </label>
-  <input id = "date-low" type = "date" required/>
-  <br/>
-  <label for = "date-high">Ending at: </label>
-  <input id = "date-high" type = "date" required/>
-</script>
+<script id = "qf-date" type = "text/html">
+  <div class = "qf">
+    <label for = "date-low">Starting from: </label>
+    <input id = "date-low" type = "date" required/>
+    <br/>
+    <label for = "date-high">Ending at: </label>
+    <input id = "date-high" type = "date" required/>
+  </div>
+  </script>
+
 <script id = "qf-change" type = "text/html">
   <label for = "qf-filename">File name: </label>
   <input id ="qf-filename" type = "text" placeholder = "File name" required/>
@@ -354,7 +357,7 @@
 
   <label for = "qf-changesort">Sort by: </label>
   <select id = "qf-changesort">
-    <option value = "most-recent">Most Recent</option>
+    <option value = "newest">Newest</option>
     <option value = "oldest">Oldest</option>
   </select>
 </script>
