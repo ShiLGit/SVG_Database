@@ -516,7 +516,7 @@ $('#file-select-form').submit(function(e){
             type: 'POST',
             url: '/query/' + url,
             contentType: 'application/json',
-            data: JSON.stringify(getLoginData()),
+            data: JSON.stringify({loginData: getLoginData(), constraints}),
             success: function(data){
                 alert("success");
                 buildQueryTable(data.allRecords);

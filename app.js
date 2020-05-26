@@ -734,7 +734,7 @@ app.post('/cleardata', async function(req, res){
 });
 
 app.post('/query/:type', async function(req, res){
-  let loginData = req.body;
+  let loginData = req.body.loginData;
   const qtype = req.params.type;
 
   let connection;
@@ -747,12 +747,13 @@ app.post('/query/:type', async function(req, res){
       password : loginData.password,
       database : loginData.database
     });
-
+    const constraints = req.body.constraints;
+    console.log(constraints);
     let query;
     if(qtype === 'allfiles')
       query = 'SELECT * FROM FILE';
-    //else if (qtype === '')
-    
+    else if (qtype === 'creation-date')
+      query = `SELECT * FROM FILE WHERE FILE.creation_time >= '${constraints.datesInterval[0]} 00:00:00' AND FILE.creation_time <= '${constraints.datesInterval[1]} 00:00:00'`; 
     const [rows, fields] = await connection.execute(query);
     allRecords = rows;
   }catch(e){
