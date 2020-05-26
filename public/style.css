@@ -16,7 +16,7 @@ body {
 /*UR CUSTOM CSSSSSSSSSSSS*/
 .qf {
     display: grid;
-    grid-template-columns: 40% 30%;
+    grid-template-columns: 40% 50%;
     margin: 2% 10%;
 }
 .qf input{

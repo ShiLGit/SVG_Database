@@ -505,7 +505,13 @@ $('#file-select-form').submit(function(e){
     $('#execute-query').submit(function(e){
         e.preventDefault();
         const url = $('#qtype').val();
-        console.log('vqf = ', validateQf());        
+        const vqf = validateQf();
+        if(!vqf.valid)
+            return alert(vqf.error);
+
+        const constraints = getConstraints(url);
+        console.log(constraints);
+
         $.ajax({
             type: 'POST',
             url: '/query/' + url,
@@ -663,6 +669,41 @@ $('#file-select-form').submit(function(e){
         }
         return loginData;
     }
+    //returns constraints for qf input 
+    function getConstraints(qtype){
+        switch(qtype){
+            case 'allfiles':
+                return {};
+            
+            case 'creation-date': 
+                return{datesInterval: [$('#date-low').val(), $('#date-high').val()]};
+            
+            case 'modification-date': 
+                return{datesInterval: [$('#date-low').val(), $('#date-high').val()]};
+
+            case 'shape-count':
+                let toReturn = {rectRange: null, circRange: null, pathRange: null, groupRange: null};
+                if($('#n_rect-low').val() !== ""){
+                    toReturn.rectRange = [$('#n_rect-low').val(), $('#n_rect-high').val()];
+                }
+                if($('#n_circ-low').val() !== ""){
+                    toReturn.circRange = [$('#n_circ-low').val(), $('#n_circ-high').val()];
+                }
+                if($('#n_path-low').val() !== ""){
+                    toReturn.pathRange = [$('#n_path-low').val(), $('#n_path-high').val()];
+                 }
+                if($('#n_group-low').val() !== ""){
+                    toReturn.groupRange = [$('#n_group-low').val(), $('#n_group-high').val()];
+                }
+                return toReturn;
+            
+            case 'most-downloaded':
+                return {display_num: $('#most-downloaded-num').val()};
+            
+            case 'changes':
+                return {fileName: $('#qf-filename').val(), changeType: $('#qf-changetype').val(), changeSort: $('#qf-changesort').val(), datesInterval: [$('#date-low').val(), $('#date-high').val()]}
+        }
+    }
     //returns true if qf input is valid
     function validateQf(){
         const qtype = $('#qtype').val();
@@ -691,7 +732,7 @@ $('#file-select-form').submit(function(e){
                 const filename = $('#qf-filename').val();
                 if(filename.substr(filename.length - 4) !== '.svg')
                     return {valid: false, error: 'ERROR: Invalid filename. (Must have .svg extension)'};
-                return validQfDates();
+                return validateQfDates();
             }        
     }
     function validateQfDates(){
