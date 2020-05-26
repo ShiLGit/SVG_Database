@@ -752,20 +752,22 @@ app.post('/query/:type', async function(req, res){
     if(qtype === 'allfiles')
       query = 'SELECT * FROM FILE';
     else if (qtype === 'creation-date')
-      query = `SELECT * FROM FILE WHERE FILE.creation_time >= '${constraints.datesInterval[0]} 23:59:59' AND FILE.creation_time <= '${constraints.datesInterval[1]} 00:00:00'`; 
+      query = `SELECT * FROM FILE WHERE FILE.creation_time >= '${constraints.datesInterval[0]} 00:00:00' AND FILE.creation_time <= '${constraints.datesInterval[1]} 23:59:59'`; 
+    
     const [rows, fields] = await connection.execute(query);
     allRecords = rows;
+    console.log(rows);
   }catch(e){
     console.log(e);
     err = e;
   }finally{
     if(connection && connection.end) connection.end();
+
+    if(err)
+      return res.status(400).send({error: err});
+    console.log('allrec: ', allRecords);
+    res.send({allRecords});
   }
-  if(err)
-    return res.status(400).send({error: err});
-  
-  console.log('allRecords', allRecords);
-  res.send({allRecords});
 });
 app.post('/query/status', async function(req, res){
   let loginData = req.body;
