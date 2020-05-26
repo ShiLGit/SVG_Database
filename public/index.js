@@ -567,11 +567,11 @@ $('#file-select-form').submit(function(e){
     //HELPERS --------------------------------------------------------------------------------------
     /*Build table based on query data >> array of all file records, represented as objects */
     function buildQueryTable(data){
-        if(!data || data.length == 0)
-            return;
-        
         $('#query-table').empty();
-        
+
+        if(!data || data.length == 0)
+            $('#query-table').append('<h6>No records found.</h6>');
+                
         //make table heading
         const fields = Object.keys(data[0]);
         let innerTH = "";
