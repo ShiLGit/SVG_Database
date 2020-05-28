@@ -26,11 +26,11 @@ $(document).ready(function() {
                     //build table row 
                     let row = `<tr>
                         <td>
-                        <a href ="${files[i].fileName}" download id = "a_${files[i].fileName}"/>
+                        <a href ="${files[i].fileName}" download />
                             <img src = "${files[i].fileName}"  id = "i_${files[i].fileName}" download/>
                         </a>
                         </td>
-                        <td ><a href = "${files[i].fileName}" download/>${files[i].fileName}</td>
+                        <td ><a href = "${files[i].fileName}" download id = "a_${files[i].fileName}"/>${files[i].fileName} </td>
                         <td>${files[i].fileSize}</td>
                         <td>${files[i].numRect}</td>
                         <td>${files[i].numCirc}</td>
@@ -41,6 +41,7 @@ $(document).ready(function() {
                     fileLog.insertAdjacentHTML('beforeend', row);
                     document.getElementById("i_" + files[i].fileName).onclick =  ()=> insert_dl(files[i].fileName);
                     document.getElementById("a_" + files[i].fileName).onclick =  ()=> insert_dl(files[i].fileName);
+                    console.log('insertions for i_' + files[i].fileName + ', a_'+files[i].fileName);
                 }
                 let options = "";
                 for(let i = 0; i < files.length; i++){           
@@ -166,7 +167,6 @@ $('#file-select-form').submit(function(e){
 
     //updates DOWNLOADS table (inserts new row)
     function insert_dl(fileName){
-        alert('wtf...')
         const loginData = getLoginData();
         if(!loginData){
             return alert("Error: invalid database connection data. Log out and try again.");
