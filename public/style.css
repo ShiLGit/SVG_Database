@@ -14,6 +14,9 @@ body {
 }
 
 /*UR CUSTOM CSSSSSSSSSSSS*/
+.accordion{
+    width: 100%;
+}
 .qf {
     display: grid;
     grid-template-columns: 40% 50%;

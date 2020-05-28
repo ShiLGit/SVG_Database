@@ -750,13 +750,19 @@ app.post('/query/:type', async function(req, res){
     const constraints = req.body.constraints;
     let query;
     if(qtype === 'allfiles')
-      query = 'SELECT * FROM FILE';
+      query = "SELECT file_name, file_title, file_description, n_rect, n_circ, n_group, n_path, creation_time, file_size as 'file_size (bytes)' FROM FILE";
     else if (qtype === 'creation-date')
       query = `SELECT * FROM FILE WHERE FILE.creation_time >= '${constraints.datesInterval[0]} 00:00:00' AND FILE.creation_time <= '${constraints.datesInterval[1]} 23:59:59'`; 
-    
+    else if (qtype === 'modification-date'){
+      query = `SELECT file_name, MAX(change_time) AS latest_change, COUNT(IMG_CHANGE.svg_id) as total_changes FROM 
+                  FILE, IMG_CHANGE 
+                  WHERE FILE.svg_id = IMG_CHANGE.svg_id
+                  AND IMG_CHANGE.change_time >= '${constraints.datesInterval[0]} 00:00:00' AND IMG_CHANGE.change_time <= '${constraints.datesInterval[1]} 23:59:59'
+                  GROUP BY IMG_CHANGE.svg_id`
+    }
     const [rows, fields] = await connection.execute(query);
     allRecords = rows;
-    console.log(rows);
+    console.log(allRecords);
   }catch(e){
     console.log(e);
     err = e;
