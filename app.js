@@ -171,7 +171,7 @@ app.post('/insertdl/:file', async function(req, res, next){
     }
 
     //INSERT DOWNLOAD RECORD
-    await connection.execute(`INSERT INTO DOWNLOAD(d_descr, svg_id) VALUES('${formatted_Date()}', ${rows[0].svg_id})`)   
+    await connection.execute(`INSERT INTO DOWNLOAD(d_descr, svg_id) VALUES('${formatted_Datetime()}', ${rows[0].svg_id})`)   
 
   }catch(e){
     console.log(e);
@@ -747,6 +747,7 @@ app.post('/query/:type', async function(req, res){
       password : loginData.password,
       database : loginData.database
     });
+
     const constraints = req.body.constraints;
     let query;
     if(qtype === 'allfiles')
@@ -760,7 +761,6 @@ app.post('/query/:type', async function(req, res){
                   AND IMG_CHANGE.change_time >= '${constraints.datesInterval[0]} 00:00:00' AND IMG_CHANGE.change_time <= '${constraints.datesInterval[1]} 23:59:59'
                   GROUP BY IMG_CHANGE.svg_id`
     }else if(qtype === 'shape-count'){
-      console.log(constraints);
       let where_clause = null;
 
       if(constraints.rectRange)
@@ -773,7 +773,10 @@ app.post('/query/:type', async function(req, res){
         where_clause? where_clause += ` AND n_group >= ${constraints.groupRange[0]} AND n_group <= ${constraints.groupRange[1]}` : where_clause = `WHERE n_group >= ${constraints.groupRange[0]} AND n_group <= ${constraints.circRange[1]}`;
        
       query = `SELECT file_name, file_title, file_description, n_rect, n_circ, n_group, n_path FROM FILE ${where_clause}`;
-      console.log(query);
+    }else if(qtype === 'most-downloaded'){
+      console.log(constraints);
+      query = `SELECT *, COUNT(svg_id) AS num_downloads FROM DOWNLOAD GROUP BY svg_id ORDER BY num_downloads LIMIT ${constraints.display_num}`
+
     }
     const [rows, fields] = await connection.execute(query);
     allRecords = rows;

@@ -166,12 +166,11 @@ $('#file-select-form').submit(function(e){
 
     //updates DOWNLOADS table (inserts new row)
     function insert_dl(fileName){
-        console.log('insert_dl', fileName)
+        alert('wtf...')
         const loginData = getLoginData();
         if(!loginData){
             return alert("Error: invalid database connection data. Log out and try again.");
         }
-        console.log(loginData);
         
         $.ajax({
             type: 'POST',
