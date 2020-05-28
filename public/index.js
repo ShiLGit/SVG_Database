@@ -762,7 +762,7 @@ $('#file-select-form').submit(function(e){
         if(n_low === "" && n_high === "")
             return true;
     
-        if(n_low == parseInt(n_low) && n_high ==parseInt(n_high) && n_low < n_high && n_low >= 0){
+        if(n_low == parseInt(n_low) && n_high ==parseInt(n_high) && n_low <= n_high && n_low >= 0){
             return true;
         }
         return false;

@@ -759,6 +759,21 @@ app.post('/query/:type', async function(req, res){
                   WHERE FILE.svg_id = IMG_CHANGE.svg_id
                   AND IMG_CHANGE.change_time >= '${constraints.datesInterval[0]} 00:00:00' AND IMG_CHANGE.change_time <= '${constraints.datesInterval[1]} 23:59:59'
                   GROUP BY IMG_CHANGE.svg_id`
+    }else if(qtype === 'shape-count'){
+      console.log(constraints);
+      let where_clause = null;
+
+      if(constraints.rectRange)
+        where_clause = `WHERE n_rect >= ${constraints.rectRange[0]} AND n_rect <= ${constraints.rectRange[1]}`;
+      if(constraints.circRange)
+        where_clause? where_clause += ` AND n_circ >= ${constraints.circRange[0]} AND n_circ <= ${constraints.circRange[1]}` : where_clause = `WHERE n_circ >= ${constraints.circRange[0]} AND n_circ <= ${constraints.circRange[1]}`;
+      if(constraints.pathRange)
+        where_clause? where_clause += ` AND n_path >= ${constraints.pathRange[0]} AND n_path <= ${constraints.pathRange[1]}` : where_clause = `WHERE n_path >= ${constraints.pathRange[0]} AND n_path <= ${constraints.pathRange[1]}`;
+      if(constraints.groupRange)
+        where_clause? where_clause += ` AND n_group >= ${constraints.groupRange[0]} AND n_group <= ${constraints.groupRange[1]}` : where_clause = `WHERE n_group >= ${constraints.groupRange[0]} AND n_group <= ${constraints.circRange[1]}`;
+       
+      query = `SELECT file_name, file_title, file_description, n_rect, n_circ, n_group, n_path FROM FILE ${where_clause}`;
+      console.log(query);
     }
     const [rows, fields] = await connection.execute(query);
     allRecords = rows;
