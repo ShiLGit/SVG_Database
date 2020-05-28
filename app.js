@@ -524,8 +524,10 @@ app.post('/attributes', function(req, res)
 
 app.post('/scalerect/:file', async function(req,res){
   const reqData = req.body;
-  console.log(req.body);
   let flag = svgParse.scaleRect('uploads/'+req.params.file, reqData.factor);
+  const desc = JSON.stringify({factor: reqData.factor});
+  console.log(desc);
+
   if(!flag){
     return res.send("ERROR: Unable to scale rectangles.");
   }
@@ -560,7 +562,7 @@ app.post('/scalerect/:file', async function(req,res){
       svg_id = rows[0].svg_id;
     }
     await connection.execute(`INSERT INTO IMG_CHANGE(change_type, change_summary, change_time, svg_id) 
-                                              VALUES('SCALE RECT', 'FILENAME: ${req.params.file}, FACTOR: ${reqData.factor}', '${formatted_Datetime()}', ${svg_id})`);
+                                              VALUES('SCALE RECT', '${desc}', '${formatted_Datetime()}', ${svg_id})`);
   }catch(e){
     console.log(e);
     err = e;
@@ -610,7 +612,7 @@ app.post('/scalecirc/:file', async function(req,res){
       svg_id = rows[0].svg_id;
     }
     await connection.execute(`INSERT INTO IMG_CHANGE(change_type, change_summary, change_time, svg_id) 
-                                              VALUES('SCALE CIRC', 'FILENAME: ${req.params.file}, FACTOR: ${reqData.factor}', '${formatted_Datetime()}', ${svg_id})`);
+                                              VALUES('SCALE CIRC', '${desc}', '${formatted_Datetime()}', ${svg_id})`);
   }catch(e){
     console.log(e);
     err = e;
@@ -774,7 +776,6 @@ app.post('/query/:type', async function(req, res){
        
       query = `SELECT file_name, file_title, file_description, n_rect, n_circ, n_group, n_path FROM FILE ${where_clause}`;
     }else if(qtype === 'most-downloaded'){
-      console.log(constraints);
       query = `SELECT file_name, COUNT(DOWNLOAD.svg_id) AS num_downloads, MAX(d_descr) as latest_download 
                 FROM DOWNLOAD, FILE 
                 WHERE FILE.svg_id = DOWNLOAD.svg_id
@@ -782,6 +783,14 @@ app.post('/query/:type', async function(req, res){
                 ORDER BY num_downloads DESC
                 LIMIT ${constraints.display_num}`
 
+    }else if (qtype === 'changes'){
+      query = `SELECT file_name, change_type, change_summary, change_time 
+               FROM FILE, IMG_CHANGE
+               WHERE FILE.svg_id = IMG_CHANGE.svg_id
+               AND FILE.file_name = '${constraints.fileName}'
+               AND IMG_CHANGE.change_type = '${constraints.changeType}'
+               AND IMG_CHANGE.change_time >= '${constraints.datesInterval[0]}' AND IMG_CHANGE.change_time <= '${constraints.datesInterval[1]}
+               ORDER BY IMG_CHANGE.change_time ${constraints.changeType === 'newest'? 'DESC' : null}' `
     }
     const [rows, fields] = await connection.execute(query);
     allRecords = rows;
