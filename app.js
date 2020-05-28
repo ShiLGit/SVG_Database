@@ -775,7 +775,12 @@ app.post('/query/:type', async function(req, res){
       query = `SELECT file_name, file_title, file_description, n_rect, n_circ, n_group, n_path FROM FILE ${where_clause}`;
     }else if(qtype === 'most-downloaded'){
       console.log(constraints);
-      query = `SELECT *, COUNT(svg_id) AS num_downloads FROM DOWNLOAD GROUP BY svg_id ORDER BY num_downloads LIMIT ${constraints.display_num}`
+      query = `SELECT file_name, COUNT(DOWNLOAD.svg_id) AS num_downloads, MAX(d_descr) as latest_download 
+                FROM DOWNLOAD, FILE 
+                WHERE FILE.svg_id = DOWNLOAD.svg_id
+                GROUP BY DOWNLOAD.svg_id 
+                ORDER BY num_downloads DESC
+                LIMIT ${constraints.display_num}`
 
     }
     const [rows, fields] = await connection.execute(query);
