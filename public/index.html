@@ -236,6 +236,7 @@
                 <input id = "new-attr-value" required disabled/>
                 <input id = "new-attr-subm" type = "submit" disabled></input>
             </form>
+            <hr/>
             <form id = "td-form">
                 <h5>Edit Title/Description</h5>
                 <label for="new-title">Title:</label>
@@ -245,12 +246,13 @@
                 <input id = "new-desc" disabled/>
                 <input id = "new-td-subm" type = "submit" disabled>
             </form>
+            <hr/>
             <form id = "shape-form">
                 <h5>Add Shape</h5>
                 <div class = "add-shape">
-                    <input type="checkbox" id="Rect" value="true" disabled>
-                    <label for="Rect">Add a Rectangle</label><br/>
-
+                  <input type="checkbox" id="Rect" value="true" disabled>
+                  <label for="Rect">Add a Rectangle</label><br/>
+                  <div class = "qf">
                     <label for="x"> x: </label> 
                     <input type="text" id="x" required><br/>
 
@@ -265,10 +267,13 @@
                     
                     <label for="units-r"> units: </label> 
                     <input type="text" id="units-r" value = ""><br/>
+                  </div>
                 </div>
                 <div class = "add-shape">
-                    <input type="checkbox" id="Circ" value="true" disabled>
-                    <label for = "Circ">Add a Circle</label><br/>
+                  <input type="checkbox" id="Circ" value="true" disabled>
+                  <label for = "Circ">Add a Circle</label><br/>
+
+                  <div class = "qf">
                     <label for="cx"> cx: </label> 
                     <input type="text" id="cx" required><br/>
 
@@ -280,16 +285,18 @@
                     
                     <label for="units-c"> units: </label> 
                     <input type="text" id="units-c"><br/>
+                  </div>
                 </div>
-                
+                 <br/>    
                  <input id = "shape-subm" type = "submit" disabled/> 
             </form>
+            <hr/>
             <form id = "scale-rect-form">
                 <label for = "scale-rect">Scale all rectangles: </label>
                 <input id = "scale-rect" type = "text" required disabled/>
                 <input type = "submit" id = "submscaler" disabled/>
             </form>
- 
+            <hr/>
             <form id = "scale-circ-form">
                 <label for = "scale-rect">Scale all circles: </label>
                 <input id = "scale-circ" type = "text" required disabled/>

@@ -438,7 +438,7 @@ $('#file-select-form').submit(function(e){
         $.ajax({
             type: 'POST',
             contentType: 'application/json',
-            url: '/query/status',
+            url: '/status',
             data: JSON.stringify(getLoginData()),
             success: function(data){
                 console.log(data);
@@ -451,7 +451,7 @@ $('#file-select-form').submit(function(e){
     //clear DB data 
     $('#cleardata').click(function(e){
         $.ajax({
-            type: 'POST',
+            type: 'DELETE',
             contentType: 'application/json',
             url: '/cleardata',
             data: JSON.stringify(getLoginData()),
@@ -517,7 +517,6 @@ $('#file-select-form').submit(function(e){
             contentType: 'application/json',
             data: JSON.stringify({loginData: getLoginData(), constraints}),
             success: function(data){
-                alert("success");
                 buildQueryTable(data.allRecords);
                 $('#table-title').html(url);
             }

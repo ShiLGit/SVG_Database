@@ -703,7 +703,7 @@ app.post('/addshape/:file', async function(req, res){
   }
   res.send("Changes saved successfully.");
 })
-app.post('/cleardata', async function(req, res){
+app.delete('/cleardata', async function(req, res){
   console.log(req.body);
   let loginData = req.body;
   let connection;
@@ -807,7 +807,7 @@ app.post('/query/:type', async function(req, res){
     res.send({allRecords});
   }
 });
-app.post('/query/status', async function(req, res){
+app.post('/status', async function(req, res){
   let loginData = req.body;
   let connection;
   let err = null;
