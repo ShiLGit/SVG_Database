@@ -60,7 +60,7 @@
                     <input id = "dblogin-uname" type = "text"  placeholder="Username" class = "form-control" required/>
             
                     <label for = "dblogin-pw">Password</label>
-                    <input id = "dblogin-pw" type = "text"  placeholder="Password" class = "form-control" required/>
+                    <input id = "dblogin-pw" type = "password"  placeholder="Password" class = "form-control" required/>
             
                     <label for = "dblogin-dbname">Database Name</label>
                     <input id = "dblogin-dbname" type = "text"  placeholder="Database Name" class = "form-control" required/>
@@ -183,7 +183,7 @@
         <a class="collapsed" data-toggle="collapse" data-parent="#fileeditor" href="#fileeditor-body"
           aria-expanded="false" aria-controls="fileeditor-body">
           <h5 class="mb-0">
-            File Editor <i class="fas fa-angle-down rotate-icon"></i>
+            File Editor/Detail Viewer <i class="fas fa-angle-down rotate-icon"></i>
           </h5>
         </a>
       </div>
@@ -191,26 +191,12 @@
       <!-- Card body -->
       <div id="fileeditor-body" class="collapse" role="tabpanel" aria-labelledby="heading-fileeditor"
         data-parent="#fileeditor">
-        
-            <form id="uploadForm"
-                enctype="multipart/form-data"
-                action="/upload"
-                method="post">
-                <h5>Upload New</h5>
-                <input type="file" name="uploadFile" required />
-                <input type="submit" value="Upload SVG" name="submit">
-            </form>
-            <form id = 'create-form'>
-                <h5>Create SVG</h5>
-                <input id = "new-fname" type = "text" required/>
-                <input type = "submit" value = "Create SVG"/>
-            </form>
 
             <form id = "file-select-form">
                 <label for="svg-name">Choose a file to view:</label>
                 <select id="svg-name" name="svg" required = true>
                 </select>
-                <input type="submit">
+                <input type="submit" class = "btn btn-primary">
             </form>
                 
 
@@ -220,21 +206,22 @@
         <table id = "file-view">
         </table>
         <div id = "attrview-wrapper">
-            <h3>Edit SVG</h3>
-            <h5>View Attribute</h5>
-            <label for="svg-ele">Choose an element to view:</label>
-            <select id="svg-ele">
-                <option value = 'placeholder'></option>
-            </select>
+            <h4 style = "text-align:center; padding: 10px" >Edit/View SVG</h4>
             <div id ="attr-summary">
             </div>
             <form id = "attr-form" >
                 <h5>Create/Update Attribute</h5>
+
+                <label for="svg-ele">Choose an element to edit:</label>
+                <select id="svg-ele">
+                    <option value = 'placeholder'></option>
+                </select>
+
                 <label for="new-attr-key">Name:</label>
                 <input id = "new-attr-key" required disabled/>
                 <label for="new-attr-value">Value:</label>
                 <input id = "new-attr-value" required disabled/>
-                <input id = "new-attr-subm" type = "submit" disabled></input>
+                <input id = "new-attr-subm" class = "btn btn-primary" type = "submit" disabled></input>
             </form>
             <hr/>
             <form id = "td-form">
@@ -244,7 +231,7 @@
                 
                 <label for="new-desc">Description:</label>
                 <input id = "new-desc" disabled/>
-                <input id = "new-td-subm" type = "submit" disabled>
+                <input id = "new-td-subm" type = "submit" class = "btn btn-primary" disabled>
             </form>
             <hr/>
             <form id = "shape-form">
@@ -288,19 +275,19 @@
                   </div>
                 </div>
                  <br/>    
-                 <input id = "shape-subm" type = "submit" disabled/> 
+                 <input id = "shape-subm" class = "btn btn-primary" type = "submit" disabled/> 
             </form>
             <hr/>
             <form id = "scale-rect-form">
                 <label for = "scale-rect">Scale all rectangles: </label>
                 <input id = "scale-rect" type = "text" required disabled/>
-                <input type = "submit" id = "submscaler" disabled/>
+                <input class = "btn btn-primary" type = "submit" id = "submscaler" disabled/>
             </form>
             <hr/>
             <form id = "scale-circ-form">
                 <label for = "scale-rect">Scale all circles: </label>
                 <input id = "scale-circ" type = "text" required disabled/>
-                <input type = "submit" id = "submscalec" disabled/>
+                <input class = "btn btn-primary" type = "submit" id = "submscalec" disabled/>
             </form>
         </div>
  
@@ -309,7 +296,43 @@
     </div>
 </div>
 <!--FILEEDITOR END-->
-   
+<!-- ADD/UPLOAD -->
+<div class = "accordion " id = "filecreate" role = "tablist" aria-multiselectable="true">
+  <!--Card -->
+  <div class = "card">
+    <!--Header-->
+    <div class = "card-header" role = "tab" id='heading-filecreate'>
+      <a class = "collapsed" data-toggle="collapse" data-parent = "#filecreate" href = "#filecreate-body"
+       aria-expanded = "false" aria-countrols = "filecreate-body">
+       <h5 class = "mb-0">
+         File Creation <i class = "fas fa-angle-down rotate-icon"></i>
+       </h5>
+      </a> 
+    </div>
+
+    <!--Body-->
+    <div id = "filecreate-body" class = "collapse" role = "tabpanel" aria-labelledby = "heading-filecreate"
+      data-parent = "#filecreate">
+            <form id="uploadForm"
+                enctype="multipart/form-data"
+                action="/upload"
+                method="post">
+                <h5>Upload New</h5>
+                <input type="file" name="uploadFile" required  />
+                <br/><br/>
+                <input type="submit" value="Upload SVG" name="submit">
+            </form>
+            <hr/>
+            <form id = 'create-form'>
+                <h5>Create SVG</h5>
+                <input id = "new-fname" type = "text" required/>
+                <input class = "btn btn-primary" type = "submit" value = "Create SVG"/>
+            </form>
+    </div>
+  </div>
+</div>
+           
+<!-- ADD/UPLOAD END-->   
 <!--Dynamic forms-->
 <script id ="qf-shape-count" type = 'text/html'>
   <p>Number of Rectangles (Range)</p>
